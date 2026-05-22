@@ -191,7 +191,7 @@ The map, scoring table, and charts all auto-generate from this data structure.
 
 **Prakash Krishnamachari** is a senior digital and data transformation leader with 25+ years of experience across Shell, Maersk, and TotalEnergies E&P Uganda, where he currently serves as Digital, Data & Innovation Manager. He holds an Executive MBA from IIM Bangalore and an M.Tech from IIT Roorkee.
 
-He is transitioning to a Fractional Chief AI Officer (CAIO) role, focusing on AI readiness assessment, data governance, and enterprise AI strategy for asset-heavy industries.
+He is pasionate about Data, AI and the infinite possibilities between the two.
 
 - **GitHub**: [github.com/prakashkrish-DataGeek](https://github.com/prakashkrish-DataGeek)
 - **Focus**: Geospatial ML, decision intelligence, infrastructure transformation
