@@ -1,328 +1,2116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoGrid AI // High-Scale AI Data Center Grid & Sustainability Matrix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --google-gray-900: #202124;
-            --google-gray-700: #5f6368;
-            --google-gray-200: #f1f3f4;
-            --google-blue: #1a73e8;
-            --google-green: #137333;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoGrid AI v2 // Hyper-Scale Data Center Siting Intelligence</title>
+  <meta name="description" content="Practitioner-grade analysis of renewable energy siting, grid capacity, and infrastructure risk for AI data center deployment across the US, China, and India."/>
+  <meta name="author" content="Prakash Krishnamachari"/>
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #ffffff;
-            color: var(--google-gray-900);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 
-        /* Top Navigation Bar */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 64px;
-            background-color: #ffffff;
-            border-bottom: 1px solid var(--google-gray-200);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 
-        .nav-logo {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--google-gray-900);
-            letter-spacing: -0.5px;
-        }
-        
-        .nav-logo span {
-            color: var(--google-blue);
-            font-weight: 700;
-        }
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--google-gray-700);
-            margin-left: 32px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
+  <style>
+    /* ===== DESIGN SYSTEM ===== */
+    :root {
+      --bg: #050A0E;
+      --bg2: #0A1218;
+      --bg3: #0F1B24;
+      --surface: #111D27;
+      --surface2: #162330;
+      --border: rgba(0,180,120,0.15);
+      --border2: rgba(255,255,255,0.06);
+      --green: #00C877;
+      --green-dim: rgba(0,200,119,0.12);
+      --green-glow: rgba(0,200,119,0.25);
+      --amber: #F5A623;
+      --amber-dim: rgba(245,166,35,0.12);
+      --red: #FF4D4D;
+      --red-dim: rgba(255,77,77,0.12);
+      --blue: #3B9EFF;
+      --blue-dim: rgba(59,158,255,0.12);
+      --text: #E8EEF2;
+      --text2: #8EA4B2;
+      --text3: #4A6270;
+      --accent: #00C877;
+      --mono: 'DM Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+      --display: 'Syne', sans-serif;
+    }
 
-        .nav-links a:hover {
-            color: var(--google-blue);
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Hero Main Section - about.google Layout Signature */
-        .hero {
-            padding: 100px 64px 60px 64px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+    html { scroll-behavior: smooth; }
 
-        .hero h1 {
-            font-size: 56px;
-            font-weight: 400;
-            line-height: 1.15;
-            letter-spacing: -1.5px;
-            margin-bottom: 24px;
-            color: var(--google-gray-900);
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-        .hero p {
-            font-size: 22px;
-            font-weight: 300;
-            color: var(--google-gray-700);
-            line-height: 1.5;
-            max-width: 850px;
-            margin-bottom: 40px;
-        }
+    /* ===== NOISE TEXTURE ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
 
-        /* Key Performance Metric Row */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            max-width: 1200px;
-            margin: 0 auto 60px auto;
-            padding: 0 64px;
-        }
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(5,10,14,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border2);
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        .metric-card {
-            background: #ffffff;
-            border: 1px solid var(--google-gray-200);
-            border-radius: 8px;
-            padding: 32px;
-            transition: box-shadow 0.3s ease;
-        }
+    .nav-brand {
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
 
-        .metric-card:hover {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
 
-        .metric-card h3 {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--google-gray-700);
-            margin-bottom: 12px;
-        }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text2);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
 
-        .metric-card .value {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--google-gray-900);
-            margin-bottom: 8px;
-        }
+    .nav-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 1px;
+    }
 
-        .metric-card .subtext {
-            font-size: 13px;
-            color: var(--google-gray-700);
-        }
+    /* ===== HERO ===== */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 100px 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* Visualization Layout Window */
-        .map-section {
-            max-width: 1400px;
-            margin: 0 auto 80px auto;
-            padding: 0 64px;
-        }
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,119,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,119,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
 
-        .map-wrapper {
-            background: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--google-gray-200);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-        }
+    .hero-glow {
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(0,200,119,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
-        /* Detailed Deep-Dive Section */
-        .details-section {
-            background-color: #f8f9fa;
-            padding: 80px 64px;
-        }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
 
-        .details-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 64px;
-        }
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(36px, 5vw, 72px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      max-width: 900px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
 
-        .details-sidebar h2 {
-            font-size: 32px;
-            font-weight: 400;
-            letter-spacing: -0.5px;
-            position: sticky;
-            top: 100px;
-        }
+    .hero-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
 
-        .region-block {
-            margin-bottom: 48px;
-            background: #ffffff;
-            padding: 32px;
-            border-radius: 12px;
-            border: 1px solid var(--google-gray-200);
-        }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text2);
+      max-width: 680px;
+      margin-top: 24px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
 
-        .region-block h3 {
-            font-size: 22px;
-            font-weight: 500;
-            margin-bottom: 16px;
-            color: var(--google-blue);
-        }
+    .hero-meta {
+      margin-top: 48px;
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
 
-        .region-block p {
-            font-size: 15px;
-            color: var(--google-gray-700);
-            margin-bottom: 16px;
-        }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
-        /* Enterprise Architecture Alignment Element */
-        .architecture-blueprint {
-            max-width: 1100px;
-            margin: 80px auto;
-            padding: 0 64px;
-        }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text);
+    }
 
-        .architecture-blueprint h2 {
-            font-size: 32px;
-            font-weight: 400;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
-        }
+    .stat-num span { color: var(--accent); }
 
-        .blueprint-box {
-            background: #fff;
-            border-left: 4px solid var(--google-blue);
-            padding: 24px;
-            background-color: var(--google-gray-200);
-            border-radius: 0 8px 8px 0;
-            font-family: monospace;
-            font-size: 14px;
-            color: #3c4043;
-            line-height: 1.8;
-            white-space: pre-wrap;
-        }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--text3);
+      text-transform: uppercase;
+    }
 
-        footer {
-            text-align: center;
-            padding: 40px;
-            font-size: 13px;
-            color: var(--google-gray-700);
-            border-top: 1px solid var(--google-gray-200);
-        }
+    .hero-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+      margin-top: 48px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1s;
+    }
 
-        @media (max-width: 968px) {
-            nav { padding: 16px 24px; }
-            .hero { padding: 60px 24px 40px 24px; }
-            .hero h1 { font-size: 36px; }
-            .metrics-grid { grid-template-columns: 1fr; padding: 0 24px; }
-            .map-section { padding: 0 24px; }
-            .details-container { grid-template-columns: 1fr; gap: 32px; }
-            .details-section { padding: 40px 24px; }
-        }
-    </style>
+    .author-line {
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 1px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.1s;
+    }
+
+    .author-line a { color: var(--accent); text-decoration: none; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== SECTION STRUCTURE ===== */
+    section {
+      padding: 100px 80px;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+
+    .section-body {
+      color: var(--text2);
+      font-size: 16px;
+      line-height: 1.8;
+      max-width: 700px;
+      margin-bottom: 60px;
+    }
+
+    .sep {
+      border: none;
+      border-top: 1px solid var(--border2);
+      margin: 0;
+    }
+
+    /* ===== THESIS SECTION ===== */
+    #thesis {
+      background: var(--bg2);
+    }
+
+    .thesis-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border2);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+    }
+
+    .thesis-card {
+      background: var(--surface);
+      padding: 36px;
+      transition: background 0.3s;
+    }
+    .thesis-card:hover { background: var(--surface2); }
+
+    .thesis-card-icon {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .thesis-card-title {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .thesis-card-body {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+
+    .thesis-card-stat {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border2);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .thesis-card-stat strong {
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    /* ===== MAP SECTION ===== */
+    #map-section {
+      background: var(--bg);
+      padding-bottom: 0;
+    }
+
+    .map-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .map-btn {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 2px;
+    }
+
+    .map-btn.active, .map-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--green-dim);
+    }
+
+    #map {
+      width: 100%;
+      height: 600px;
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+    }
+
+    .map-legend {
+      display: flex;
+      gap: 24px;
+      padding: 16px 0;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border2);
+      margin-top: 0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ===== SCORING MATRIX ===== */
+    #scoring {
+      background: var(--bg2);
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .matrix-table th {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .matrix-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border2);
+      vertical-align: middle;
+    }
+
+    .matrix-table tr:hover td { background: var(--surface); }
+
+    .site-name {
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .site-country {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    .score-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-bar {
+      height: 4px;
+      border-radius: 2px;
+      flex-grow: 1;
+      background: var(--surface);
+      max-width: 80px;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .score-val {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 30px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 2px;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-green { background: var(--green-dim); color: var(--green); }
+    .badge-amber { background: var(--amber-dim); color: var(--amber); }
+    .badge-red { background: var(--red-dim); color: var(--red); }
+
+    /* ===== REGIONAL INSIGHTS ===== */
+    #insights {
+      background: var(--bg);
+    }
+
+    .country-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border2);
+      margin-bottom: 48px;
+    }
+
+    .country-tab {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border: none;
+      background: transparent;
+      color: var(--text3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+
+    .country-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .country-panel { display: none; }
+    .country-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+
+    .insight-block {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      padding: 32px;
+    }
+
+    .insight-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border2);
+    }
+
+    .insight-location {
+      font-family: var(--display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .insight-mw {
+      font-family: var(--mono);
+      font-size: 22px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .insight-mw-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text3);
+      text-align: right;
+      letter-spacing: 1px;
+    }
+
+    .insight-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .insight-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .insight-row-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--text3);
+      text-transform: uppercase;
+    }
+
+    .insight-row-val {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .mini-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mini-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 2px;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+    }
+
+    /* ===== CHART SECTION ===== */
+    #analytics {
+      background: var(--bg2);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      padding: 28px;
+    }
+
+    .chart-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+
+    .chart-subtitle {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 24px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 260px;
+    }
+
+    /* ===== ARCHITECTURE ===== */
+    #architecture {
+      background: var(--bg);
+    }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border2);
+      margin-bottom: 60px;
+    }
+
+    .arch-card {
+      background: var(--surface);
+      padding: 32px;
+    }
+
+    .arch-number {
+      font-family: var(--display);
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--border2);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .arch-title {
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .arch-body {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+
+    .arch-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+    }
+
+    .arch-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: var(--accent);
+      border: 1px solid rgba(0,200,119,0.2);
+      padding: 3px 8px;
+      border-radius: 1px;
+    }
+
+    /* ===== RISK MATRIX ===== */
+    #risks {
+      background: var(--bg2);
+    }
+
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .risk-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-left: 3px solid;
+      padding: 24px;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .risk-card.high { border-left-color: var(--red); }
+    .risk-card.medium { border-left-color: var(--amber); }
+    .risk-card.low { border-left-color: var(--green); }
+
+    .risk-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .risk-card.high .risk-label { color: var(--red); }
+    .risk-card.medium .risk-label { color: var(--amber); }
+    .risk-card.low .risk-label { color: var(--green); }
+
+    .risk-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .risk-body {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* ===== PRACTITIONER NOTE ===== */
+    #practitioner {
+      background: var(--bg);
+      padding: 80px;
+    }
+
+    .pnote {
+      max-width: 900px;
+      margin: 0 auto;
+      border-left: 2px solid var(--accent);
+      padding-left: 40px;
+    }
+
+    .pnote-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .pnote-text {
+      font-family: var(--display);
+      font-size: clamp(18px, 2.5vw, 28px);
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .pnote-body {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.8;
+      max-width: 700px;
+    }
+
+    .pnote-sig {
+      margin-top: 40px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pnote-sig::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--text3);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border2);
+      padding: 40px 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand {
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .footer-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    .footer-meta a { color: var(--text3); text-decoration: none; }
+    .footer-meta a:hover { color: var(--accent); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      #hero, section { padding: 80px 24px; }
+      #practitioner { padding: 60px 24px; }
+      footer { padding: 30px 24px; flex-direction: column; gap: 16px; text-align: center; }
+      .thesis-grid { grid-template-columns: 1fr; }
+      .country-panel.active { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .arch-grid { grid-template-columns: 1fr; }
+      .risk-grid { grid-template-columns: 1fr; }
+      .hero-meta { gap: 24px; }
+    }
+
+    /* ===== UTILITY ===== */
+    .text-accent { color: var(--accent); }
+    .text-mono { font-family: var(--mono); }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+
+    /* Leaflet popup override */
+    .leaflet-popup-content-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      color: var(--text);
+    }
+    .leaflet-popup-tip { background: var(--surface); }
+    .leaflet-popup-content { margin: 0; width: auto !important; }
+
+    .popup-inner {
+      padding: 20px;
+      min-width: 280px;
+    }
+
+    .popup-location {
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .popup-country {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .popup-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .popup-stat-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .popup-stat-val {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .popup-divider {
+      border: none;
+      border-top: 1px solid var(--border2);
+      margin: 12px 0;
+    }
+
+    .popup-row-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .popup-row-val {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .pulse-ring {
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { stroke-opacity: 0.6; stroke-width: 1.5; }
+      100% { stroke-opacity: 0; stroke-width: 8; }
+    }
+  </style>
 </head>
 <body>
 
-    <nav>
-        <div class="nav-logo">EcoGrid <span>AI</span></div>
-        <div class="nav-links">
-            <a href="#overview">Overview</a>
-            <a href="#interactive-map">Global Map</a>
-            <a href="#regional-insights">Regional Insights</a>
-            <a href="#architecture">Architecture Blueprint</a>
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">EcoGrid AI</div>
+  <ul class="nav-links">
+    <li><a href="#thesis">Thesis</a></li>
+    <li><a href="#map-section">Global Map</a></li>
+    <li><a href="#scoring">Scoring Matrix</a></li>
+    <li><a href="#insights">Regional Intel</a></li>
+    <li><a href="#analytics">Analytics</a></li>
+    <li><a href="#risks">Risk Register</a></li>
+  </ul>
+  <div class="nav-tag">v2.0 // May 2026</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Hyper-Scale Energy Intelligence Platform</div>
+  <h1 class="hero-title">
+    Where AI's energy<br/>
+    appetite meets<br/>
+    <em>sovereign grid reality.</em>
+  </h1>
+  <p class="hero-sub">
+    Practitioner-grade analysis of 14.9 GW in proposed AI data center capacity across 11 clusters in the US, China, and India—intersected against live grid constraints, renewable energy access, water stress, carbon intensity, policy risk, and infrastructure investment sizing.
+  </p>
+  <div class="hero-meta">
+    <div class="hero-stat">
+      <div class="stat-num">14<span>.9 GW</span></div>
+      <div class="stat-label">Tracked capacity pipeline</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">11</div>
+      <div class="stat-label">Cluster sites analyzed</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Sovereign grids</div>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-num">$<span>4.2T</span></div>
+      <div class="stat-label">Infrastructure investment implied</div>
+    </div>
+  </div>
+  <div class="hero-divider"></div>
+  <div class="author-line">
+    By <a href="https://github.com/prakashkrish-DataGeek" target="_blank">Prakash Krishnamachari</a>
+    &nbsp;·&nbsp; Digital, Data & Innovation Leader &nbsp;·&nbsp; 25+ years in asset-heavy infrastructure
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- THESIS -->
+<section id="thesis">
+  <div class="section-label">The Strategic Context</div>
+  <h2 class="section-title">This isn't a power story.<br/>It's a sovereignty story.</h2>
+  <p class="section-body">
+    Every hyperscaler's site selection decision is fundamentally a bet on three sovereignties simultaneously: energy sovereignty (can the grid supply and sustain the load?), regulatory sovereignty (will policy allow it to scale?), and water sovereignty (is there cooling capacity without ecological debt?). The industry tends to obsess over renewable percentages. Operators who have actually run infrastructure at scale know the real constraint is interconnect queue depth and grid inertia.
+  </p>
+  <div class="thesis-grid">
+    <div class="thesis-card">
+      <div class="thesis-card-icon">⚡</div>
+      <div class="thesis-card-title">Grid Inertia Is the Hidden Constraint</div>
+      <div class="thesis-card-body">Nameplate renewable capacity means nothing at the substation. The PJM interconnect queue in Virginia alone exceeds 300 GW of requests against a realistic 20 GW absorption capacity over the next decade. Operators building there are essentially financing grid upgrades for the entire region.</div>
+      <div class="thesis-card-stat">Interconnect queue-to-absorption ratio: <strong>&gt;15:1</strong> in PJM / <strong>~3:1</strong> in ERCOT</div>
+    </div>
+    <div class="thesis-card">
+      <div class="thesis-card-icon">💧</div>
+      <div class="thesis-card-title">Water Is the Silent Dealbreaker</div>
+      <div class="thesis-card-body">A 100 MW data center using evaporative cooling consumes ~500,000 gallons of water per day. Phoenix and Inner Mongolia both offer cheap power, but face severe long-run water stress that will trigger regulatory intervention within a 10-year asset depreciation horizon.</div>
+      <div class="thesis-card-stat">Phoenix water stress index: <strong>Extremely High (5/5)</strong> &nbsp;|&nbsp; Navi Mumbai coastal availability: <strong>Moderate (3/5)</strong></div>
+    </div>
+    <div class="thesis-card">
+      <div class="thesis-card-icon">🌿</div>
+      <div class="thesis-card-title">Renewable % Is a Marketing Number</div>
+      <div class="thesis-card-body">24/7 carbon-free energy (CFE) matching is the actual sustainability benchmark—not annual renewable percentage claims. Only a handful of sites globally can credibly commit to hourly CFE matching at hyperscale. Guizhou's hydro profile is the closest analog in emerging markets.</div>
+      <div class="thesis-card-stat">Hourly CFE capability: <strong>Guizhou 91%</strong> / <strong>Inner Mongolia 64%</strong> / <strong>Rajasthan 58%</strong></div>
+    </div>
+    <div class="thesis-card">
+      <div class="thesis-card-icon">🏛️</div>
+      <div class="thesis-card-title">Policy Risk Has a Compounding Half-Life</div>
+      <div class="thesis-card-body">Data center permitting cycles in the US average 3–5 years. India's wheeling regulations change faster than most hyperscalers can lock in PPAs. China's data localization and cross-border data flow restrictions add a geopolitical premium to otherwise compelling energy economics.</div>
+      <div class="thesis-card-stat">Avg US permitting timeline: <strong>42 months</strong> &nbsp;|&nbsp; India PPA lock-in risk: <strong>High</strong></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- MAP -->
+<section id="map-section">
+  <div class="section-label">Geospatial Intelligence Layer</div>
+  <h2 class="section-title">11 Clusters. One Constraint Matrix.</h2>
+  <p class="section-body">Each site is sized by proposed MW capacity. Color indicates renewable access tier. Click any cluster for full grid intelligence including PUE targets, water stress, carbon intensity, and operator landscape.</p>
+  <div class="map-controls">
+    <button class="map-btn active" onclick="filterMap('all')">All Regions</button>
+    <button class="map-btn" onclick="filterMap('us')">United States</button>
+    <button class="map-btn" onclick="filterMap('china')">China</button>
+    <button class="map-btn" onclick="filterMap('india')">India</button>
+  </div>
+  <div id="map"></div>
+  <div class="map-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#00C877"></div>Very High Renewable Access</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7DC77A"></div>High Renewable Access</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F5A623"></div>Moderate Renewable Access</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FF4D4D"></div>Low / Constrained Access</div>
+    <div class="legend-item" style="margin-left:auto"><span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Circle size = proposed MW capacity</span></div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- SCORING MATRIX -->
+<section id="scoring">
+  <div class="section-label">Multi-Dimensional Site Score</div>
+  <h2 class="section-title">Comparative Siting Matrix</h2>
+  <p class="section-body">Scored across six dimensions: renewable access, grid stability, water stress (inverted), policy clarity, cost competitiveness, and infrastructure readiness. Weighted equally at 1/6 each for a composite out of 100.</p>
+
+  <div style="overflow-x:auto">
+  <table class="matrix-table">
+    <thead>
+      <tr>
+        <th>Site</th>
+        <th>Proposed MW</th>
+        <th>Renewable Access</th>
+        <th>Grid Stability</th>
+        <th>Water Risk</th>
+        <th>Policy Clarity</th>
+        <th>Cost Index</th>
+        <th>Composite Score</th>
+        <th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody id="matrixBody">
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- REGIONAL INSIGHTS -->
+<section id="insights">
+  <div class="section-label">Regional Intelligence</div>
+  <h2 class="section-title">Inside the Grid Rooms</h2>
+  <p class="section-body">Per-site operational intelligence including operator landscape, power purchase agreement structure, cooling architecture constraints, and the unfiltered grid constraint picture.</p>
+
+  <div class="country-tabs">
+    <button class="country-tab active" onclick="switchTab('us')">United States</button>
+    <button class="country-tab" onclick="switchTab('china')">China</button>
+    <button class="country-tab" onclick="switchTab('india')">India</button>
+  </div>
+
+  <!-- US Panel -->
+  <div class="country-panel active" id="panel-us">
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Northern Virginia</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Loudoun Co. / PJM Grid</div>
         </div>
-    </nav>
-
-    <section class="hero" id="overview">
-        <h1>Mapping the hyper-scale energy footprint.</h1>
-        <p>As deep learning models scale exponentially, data center clusters represent unprecedented structural loads on sovereign utility infrastructures. This engine analyzes proposed capacity rollouts across the United States, China, and India—intersecting targeted megawatt demands against power grid stability constraints and localized renewable asset availability.</p>
-    </section>
-
-    <section class="metrics-grid">
-        <div class="metric-card">
-            <h3>Tracked Global Capacity</h3>
-            <div class="value">14.9 GW</div>
-            <div class="subtext">Aggregate power demand pipeline for tracked clusters across the US, China, and India regions.</div>
+        <div style="text-align:right">
+          <div class="insight-mw">3,200</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
         </div>
-        <div class="metric-card">
-            <h3>Renewable Lead</h3>
-            <div class="value">Guizhou Hub</div>
-            <div class="subtext">Highest immediate clean resource availability driven by localized sovereign hydro-electric networks.</div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Constraint</div>
+          <div class="insight-row-val">Severe PJM transmission congestion. Dominion Energy's grid operating near capacity in Loudoun County. New interconnect applications face 5–7 year timelines. "NOVA2" and "NOVA3" substations both at saturation.</div>
         </div>
-        <div class="metric-card">
-            <h3>Critical Bottleneck</h3>
-            <div class="value">N. Virginia</div>
-            <div class="subtext">PJM transmission limitations and land allocation density causing hyper-scale deployment friction.</div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Pathway</div>
+          <div class="insight-row-val">Offshore wind (CVOW, 2.6GW) is the primary incremental source. Virginia's 100% clean energy mandate by 2045 creates policy tailwind but execution risk. PPA rates: ~$45–55/MWh for wind.</div>
         </div>
-    </section>
-
-    <section class="map-section" id="interactive-map">
-        <div class="map-wrapper">
-            <iframe src="data:text/html;base64,PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIAogICAgPG1ldGEgaHR0cC1lcXVpdj0iY29udGVudC10eXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9VVRGLTgiIC8+CiAgICA8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9sZWFmbGV0QDEuOS4zL2Rpc3QvbGVhZmxldC5qcyI+PC9zY3JpcHQ+CiAgICA8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jb2RlLmpxdWVyeS5jb20vanF1ZXJ5LTMuNy4xLm1pbi5qcyI+PC9zY3JpcHQ+CiAgICA8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L25wbS9ib290c3RyYXBANS4yLjIvZGlzdC9qcy9ib290c3RyYXAuYnVuZGxlLm1pbi5qcyI+PC9zY3JpcHQ+CiAgICA8c2NyaXB0IHNyYz0iaHR0cHM6Ly9jZG5qcy5jbG91ZGZsYXJlLmNvbS9hamF4L2xpYnMvTGVhZmxldC5hd2Vzb21lLW1hcmtlcnMvMi4wLjIvbGVhZmxldC5hd2Vzb21lLW1hcmtlcnMuanMiPjwvc2NyaXB0PgogICAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvbnBtL2xlYWZsZXRAMS45LjMvZGlzdC9sZWFmbGV0LmNzcyIvPgogICAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvbnBtL2Jvb3RzdHJhcEA1LjIuMi9kaXN0L2Nzcy9ib290c3RyYXAubWluLmNzcyIvPgogICAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJodHRwczovL25ldGRuYS5ib290c3RyYXBjZG4uY29tL2Jvb3RzdHJhcC8zLjAuMC9jc3MvYm9vdHN0cmFwLWdseXBoaWNvbnMuY3NzIi8+CiAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vQGZvcnRhd2Vzb21lL2ZvbnRhd2Vzb21lLWZyZWVANi4yLjAvY3NzL2FsbC5taW4uY3NzIi8+CiAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Imh0dHBzOi8vY2RuanMuY2xvdWRmbGFyZS5jb20vYWpheC9saWJzL0xlYWZsZXQuYXdlc29tZS1tYXJrZXJzLzIuMC4yL2xlYWZsZXQuYXdlc29tZS1tYXJrZXJzLmNzcyIvPgogICAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvZ2gvcHl0aG9uLXZpc3VhbGl6YXRpb24vZm9saXVtL2ZvbGl1bS90ZW1wbGF0ZXMvbGVhZmxldC5hd2Vzb21lLnJvdGF0ZS5taW4uY3NzIi8+CiAgICAKICAgICAgICAgICAgPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwKICAgICAgICAgICAgICAgIGluaXRpYWwtc2NhbGU9MS4wLCBtYXhpbXVtLXNjYWxlPTEuMCwgdXNlci1zY2FsYWJsZT1ubyIgLz4KICAgICAgICAgICAgPHN0eWxlPgogICAgICAgICAgICAgICAgI21hcF82NTNjNjA4ZWUxMzdiYmY4MjVmZjVjYTVlNmU1ZTM4ZSB7CiAgICAgICAgICAgICAgICAgICAgcG9zaXRpb246IHJlbGF0aXZlOwogICAgICAgICAgICAgICAgICAgIHdpZHRoOiAxMDAuMCU7CiAgICAgICAgICAgICAgICAgICAgaGVpZ2h0OiAxMDAuMCU7CiAgICAgICAgICAgICAgICAgICAgbGVmdDogMC4wJTsKICAgICAgICAgICAgICAgICAgICB0b3A6IDAuMCU7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAubGVhZmxldC1jb250YWluZXIgeyBmb250LXNpemU6IDFyZW07IH0KICAgICAgICAgICAgPC9zdHlsZT4KCiAgICAgICAgICAgIDxzdHlsZT5odG1sLCBib2R5IHsKICAgICAgICAgICAgICAgIHdpZHRoOiAxMDAlOwogICAgICAgICAgICAgICAgaGVpZ2h0OiAxMDAlOwogICAgICAgICAgICAgICAgbWFyZ2luOiAwOwogICAgICAgICAgICAgICAgcGFkZGluZzogMDsKICAgICAgICAgICAgfQogICAgICAgICAgICA8L3N0eWxlPgoKICAgICAgICAgICAgPHN0eWxlPiNtYXAgewogICAgICAgICAgICAgICAgcG9zaXRpb246YWJzb2x1dGU7CiAgICAgICAgICAgICAgICB0b3A6MDsKICAgICAgICAgICAgICAgIGJvdHRvbTowOwogICAgICAgICAgICAgICAgcmlnaHQ6MDsKICAgICAgICAgICAgICAgIGxlZnQ6MDsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgPC9zdHlsZT4KCiAgICAgICAgICAgIDxzY3JpcHQ+CiAgICAgICAgICAgICAgICBMX05PX1RPVUNIID0gZmFsc2U7CiAgICAgICAgICAgICAgICBMX0RJU0FCTEVfM0QgPSBmYWxzZTsKICAgICAgICAgICAgPC9zY3JpcHQ+CgogICAgICAgIAogICAgPHNjcmlwdCBzcmM9Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0vbGVhZmxldC5mdWxsc2NyZWVuQDMuMC4wL0NvbnRyb2wuRnVsbFNjcmVlbi5taW4uanMiPjwvc2NyaXB0PgogICAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvbnBtL2xlYWZsZXQuZnVsbHNjcmVlbkAzLjAuMC9Db250cm9sLkZ1bGxTY3JlZW4uY3NzIi8+CjwvaGVhZD4KPGJvZHk+CiAgICAKICAgIAogICAgICAgICAgICA8ZGl2IGNsYXNzPSJmb2xpdW0tbWFwIiBpZD0ibWFwXzY1M2M2MDhlZTEzN2JiZjgyNWZmNWNhNWU2ZTVlMzhlIiA+PC9kaXY+CiAgICAgICAgCjwvYm9keT4KPHNjcmlwdD4KICAgIAogICAgCiAgICAgICAgICAgIHZhciBtYXBfNjUzYzYwOGVlMTM3YmJmODI1ZmY1Y2E1ZTZlNWUzOGUgPSBMLm1hcCgKICAgICAgICAgICAgICAgICJtYXBfNjUzYzYwOGVlMTM3YmJmODI1ZmY1Y2E1ZTZlNWUzOGUiLAogICAgICAgICAgICAgICAgewogICAgICAgICAgICAgICAgICAgIGNlbnRlcjogWzI1LjAsIDMwLjBdLAogICAgICAgICAgICAgICAgICAgIGNyczogTC5DUlMuRVBTRzM4NTcsCiAgICAgICAgICAgICAgICAgICAgLi4uewogICJ6b29tIjogMywKICAiem9vbUNvbnRyb2wiOiB0cnVlLAogICJwcmVmZXJDYW52YXMiOiBmYWxzZSwKfQoKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgKTsKICAgICAgICAgICAgTC5jb250cm9sLnNjYWxlKCkuYWRkVG8obWFwXzY1M2M2MDhlZTEzN2JiZjgyNWZmNWNhNWU2ZTVlMzhlKTsKCiAgICAgICAgICAgIAoKICAgICAgICAKICAgIAogICAgICAgICAgICB2YXIgdGlsZV9sYXllcl9iNzhhYjRjMGIxZTk0OTlmOTQxNjVmOWYwYzdlMzM2NiA9IEwudGlsZUxheWVyKAogICAgICAgICAgICAgICAgImh0dHBzOi8ve3N9LmJhc2VtYXBzLmNhcnRvY2RuLmNvbS9saWdodF9hbGwve3p9L3t4fS97eX17cn0ucG5nIiwKICAgICAgICAgICAgICAgIHsKICAibWluWm9vbSI6IDAsCiAgIm1heFpvb20iOiAyMCwKICAibWF4TmF0aXZlWm9vbSI6IDIwLAogICJub1dyYXAiOiBmYWxzZSwKICAiYXR0cmlidXRpb24iOiAiXHUwMDI2Y29weTsgXHUwMDNjYSBocmVmPVwiaHR0cHM6Ly93d3cub3BlbnN0cmVldG1hcC5vcmcvY29weXJpZ2h0XCJcdTAwM2VPcGVuU3RyZWV0TWFwXHUwMDNjL2FcdTAwM2UgY29udHJpYnV0b3JzIFx1MDAyNmNvcHk7IFx1MDAzY2EgaHJlZj1cImh0dHBzOi8vY2FydG8uY29tL2F0dHJpYnV0aW9uc1wiXHUwMDNlQ0FSVE9cdTAwM2MvYVx1MDAzZSIsCiAgInN1YmRvbWFpbnMiOiAiYWJjZCIsCiAgImRldGVjdFJldGluYSI6IGZhbHNlLAogICJ0bXMiOiBmYWxzZSwKICAib3BhY2l0eSI6IDEsCn0KCiAgICAgICAgICAgICk7CiAgICAgICAgCiAgICAKICAgICAgICAgICAgdGlsZV9sYXllcl9iNzhhYjRjMGIxZTk0OTlmOTQxNjVmOWYwYzdlMzM2Ni5hZGRUbyhtYXBfNjUzYzYwOGVlMTM3YmJmODI1ZmY1Y2E1ZTZlNWUzOGUpOwogICAgICAgIAogICAgCiAgICAgICAgICAgIHZhciBmZWF0dXJlX2dyb3VwX2EwZDE4MDdlOTZhNGI0OGQ4NWM2ZDc3ODJhMTRmMDliID0gTC5mZWF0dXJlR3JvdXAoCiAgICAgICAgICAgICAgICB7Cn0KICAgICAgICAgICAgKTsKICAgICAgICAKICAgIAogICAgICAgICAgICB2YXIgY2lyY2xlX21hcmtlcl9jNzZmMTRkNTIxMzc3OGQ2MDMzZWU3OGE4MGRlODA3MyA9IEwuY2lyY2xlTWFya2VyKAogICAgICAgICAgICAgICAgWzM5LjA0MzgsIC03Ny40ODc1XSwKICAgICAgICAgICAgICAgIHsiYnViYmxpbmdNb3VzZUV2ZW50cyI6IHRydWUsICJjb2xvciI6ICIjZjI5OTRhIiwgImRhc2hBcnJheSI6IG51bGwsICJkYXNoT2Zmc2V0IjogbnVsbCwgImZpbGwiOiB0cnVlLCAiZmlsbENvbG9yIjogIiNmMjk5NGEiLCAiZmlsbE9wYWNpdHkiOiAwLjYsICJmaWxsUnVsZSI6ICJldmVub2RkIiwgImxpbmVDYXAiOiAicm91bmQiLCAibGluZUpvaW4iOiAicm91bmQiLCAib3BhY2l0eSI6IDEuMCwgInJhZGl1cyI6IDU3LjYsICJzdHJva2UiOiB0cnVlLCAid2VpZ2h0IjogMS41fQogICAgICAgICAgICApLmFkZFRvKGZlYXR1cmVfZ3JvdXBfYTBkMTgwN2U5NmE0YjQ4ZDg1YzZkNzc4MmExNGYwOWIpOwogICAgICAgIAogICAgCiAgICAgICAgdmFyIHBvcHVwX2Y5MTRkYjM5ODY3NDlmMGQ1ZjA5ZDQ2NmQyZTQ4MmViID0gTC5wb3B1cCh7CiAgIm1heFdpZHRoIjogMzAwLAp9KTsKCiAgICAgICAgCiAgICAgICAgICAgIAogICAgICAgICAgICAgICAgdmFyIGh0bWxfMzRiZGY0ZjQ0ZjQ0NTgyZjcwZTY3Y2JiMzJjZjAyYzMgPSAkKGA8ZGl2IGlkPSJodG1sXzM0YmRmNGY0NGY0NDU4MmY3MGU2N2NiYjMyY2YwMmMzIiBzdHlsZT0id2lkdGg6IDEwMC4wJTsgaGVpZ2h0OiAxMDAuMCU7Ij4gICAgICAgICA8ZGl2IHN0eWxlPSJmb250LWZhbWlseTogJ1JvYm90bycsIHNhbnMtc2VyaWY7IHdpZHRoOiAyODBweDsgY29sb3I6ICMyMDIxMjQ7Ij4gICAgICAgICAgICAgPGg0IHN0eWxlPSJtYXJnaW46IDAgMCA0cHggMDsgZm9udC1zaXplOiAxNnB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzFhNzNlODsiPk5vcnRoZXJuIFZpcmdpbmlhIChMb3Vkb3VuIENvLik8L2g0PiAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyBmb250LXNpemU6IDEycHg7IGZvbnQtd2VpZ2h0OiA1MDA7IGNvbG9yOiAjNWY2MzY4OyI+VW5pdGVkIFN0YXRlczwvcD4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IDAuNXB4OyBjb2xvcjogIzcwNzU3YTsgZGlzcGxheTogYmxvY2s7Ij5HcmlkIFBpcGVsaW5lIENhcGFjaXR5PC9zcGFuPiAgICAgICAgICAgICAgICAgPHN0cm9uZyBzdHlsZT0iZm9udC1zaXplOiAxNXB4OyBjb2xvcjogIzIwMjEyNDsiPjMyMDAgTVc8L3N0cm9uZz4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+UmVuZXdhYmxlIEFjY2VzcyBQcm9maWxlPC9zcGFuPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgcGFkZGluZzogMnB4IDhweDsgYm9yZGVyLXJhZGl1czogNHB4OyBmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGJhY2tncm91bmQtY29sb3I6ICNmMjk5NGEyMDsgY29sb3I6ICNmMjk5NGE7Ij4gICAgICAgICAgICAgICAgICAgICDil48gTW9kZXJhdGUgQXZhaWxhYmlsaXR5ICAgICAgICAgICAgICAgICA8L3NwYW4+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyBib3JkZXItdG9wOiAxcHggc29saWQgI2YxZjNmNDsgcGFkZGluZy10b3A6IDZweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMyMDIxMjQ7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBDb25zdHJhaW50czo8L3NwYW4+ICAgICAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAycHggMCAwIDA7IGZvbnQtc2l6ZTogMTFweDsgbGluZS1oZWlnaHQ6IDEuNDsgY29sb3I6ICMzYzQwNDM7Ij5TZXZlcmUgVHJhbnNtaXNzaW9uIENvbmdlc3Rpb247IFBKTSBncmlkIGNhcGFjaXR5IGZhY2luZyBtYWpvciByZWxpYWJpbGl0eSBib3R0bGVuZWNrcy48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogNHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5TdXN0YWluYWJpbGl0eS9QVUUgU3RyYXRlZ3k6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+QWR2YW5jZWQgZXZhcG9yYXRpdmUgY2hpbGxlcnMgYW5kIHdpbnRlciBhaXItc2lkZSBlY29ub21pemF0aW9uLjwvcD4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgPC9kaXY+ICAgICAgICAgPC9kaXY+YClbMF07CiAgICAgICAgICAgICAgICBwb3B1cF9mOTE0ZGIzOTg2NzQ5ZjBkNWYwOWQ0NjZkMmU0ODJlYi5zZXRDb250ZW50KGh0bWxfMzRiZGY0ZjQ0ZjQ0NTgyZjcwZTY3Y2JiMzJjZjAyYzMpOwogICAgICAgICAgICAKICAgICAgICAKCiAgICAgICAgY2lyY2xlX21hcmtlcl9jNzZmMTRkNTIxMzc3OGQ2MDMzZWU3OGE4MGRlODA3My5iaW5kUG9wdXAocG9wdXBfZjkxNGRiMzk4Njc0OWYwZDVmMDlkNDY2ZDJlNDgyZWIpCiAgICAgICAgOwoKICAgICAgICAKICAgIAogICAgCiAgICAgICAgICAgIHZhciBjaXJjbGVfbWFya2VyXzA5MjMwYTdmYjEzOWY5NmMwMDEzNzU2MmVhMThlMzMzID0gTC5jaXJjbGVNYXJrZXIoCiAgICAgICAgICAgICAgICBbMzMuNDQ4NCwgLTExMi4wNzRdLAogICAgICAgICAgICAgICAgeyJidWJibGluZ01vdXNlRXZlbnRzIjogdHJ1ZSwgImNvbG9yIjogIiMyMTk2NTMiLCAiZGFzaEFycmF5IjogbnVsbCwgImRhc2hPZmZzZXQiOiBudWxsLCAiZmlsbCI6IHRydWUsICJmaWxsQ29sb3IiOiAiIzIxOTY1MyIsICJmaWxsT3BhY2l0eSI6IDAuNiwgImZpbGxSdWxlIjogImV2ZW5vZGQiLCAibGluZUNhcCI6ICJyb3VuZCIsICJsaW5lSm9pbiI6ICJyb3VuZCIsICJvcGFjaXR5IjogMS4wLCAicmFkaXVzIjogMjUuMiwgInN0cm9rZSI6IHRydWUsICJ3ZWlnaHQiOiAxLjV9CiAgICAgICAgICAgICkuYWRkVG8oZmVhdHVyZV9ncm91cF9hMGQxODA3ZTk2YTRiNDhkODVjNmQ3NzgyYTE0ZjA5Yik7CiAgICAgICAgCiAgICAKICAgICAgICB2YXIgcG9wdXBfZWY1YjU4YWRkNDg0MTA1YjVjZDA4YmNkZjUyNzNjOTYgPSBMLnBvcHVwKHsKICAibWF4V2lkdGgiOiAzMDAsCn0pOwoKICAgICAgICAKICAgICAgICAgICAgCiAgICAgICAgICAgICAgICB2YXIgaHRtbF9jYTU0ZTc2NTIzMTk2NTBiYWFiNmJhM2Y3MDgxMmRjNyA9ICQoYDxkaXYgaWQ9Imh0bWxfY2E1NGU3NjUyMzE5NjUwYmFhYjZiYTNmNzA4MTJkYzciIHN0eWxlPSJ3aWR0aDogMTAwLjAlOyBoZWlnaHQ6IDEwMC4wJTsiPiAgICAgICAgIDxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiAnUm9ib3RvJywgc2Fucy1zZXJpZjsgd2lkdGg6IDI4MHB4OyBjb2xvcjogIzIwMjEyNDsiPiAgICAgICAgICAgICA8aDQgc3R5bGU9Im1hcmdpbjogMCAwIDRweCAwOyBmb250LXNpemU6IDE2cHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMWE3M2U4OyI+UGhvZW5peCwgQXJpem9uYTwvaDQ+ICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7IGZvbnQtc2l6ZTogMTJweDsgZm9udC13ZWlnaHQ6IDUwMDsgY29sb3I6ICM1ZjYzNjg7Ij5Vbml0ZWQgU3RhdGVzPC9wPiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC41cHg7IGNvbG9yOiAjNzA3NTdhOyBkaXNwbGF5OiBibG9jazsiPkdyaWQgUGlwZWxpbmUgQ2FwYWNpdHk8L3NwYW4+ICAgICAgICAgICAgICAgICA8c3Ryb25nIHN0eWxlPSJmb250LXNpemU6IDE1cHg7IGNvbG9yOiAjMjAyMTI0OyI+MTQwMCBNVzwvc3Ryb25nPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IDAuNXB4OyBjb2xvcjogIzcwNzU3YTsgZGlzcGxheTogYmxvY2s7Ij5SZW5ld2FibGUgQWNjZXNzIFByb2ZpbGU8L3NwYW4+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyBwYWRkaW5nOiAycHggOHB4OyBib3JkZXItcmFkaXVzOiA0cHg7IGZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgYmFja2dyb3VuZC1jb2xvcjogIzIxOTY1MzIwOyBjb2xvcjogIzIxOTY1MzsiPiAgICAgICAgICAgICAgICAgICAgIOKXjyBIaWdoIEF2YWlsYWJpbGl0eSAgICAgICAgICAgICAgICAgPC9zcGFuPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNmMWYzZjQ7IHBhZGRpbmctdG9wOiA2cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMjAyMTI0OyBkaXNwbGF5OiBibG9jazsiPkdyaWQgQ29uc3RyYWludHM6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+U3RhYmxlIGRlc2VydCBncmlkIGRpc3RyaWJ1dGlvbjsgaGlnaCBsb2FkIG1hdGNoIHdpdGggZGF5bGlnaHQgaG91cnMuPC9wPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDRweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMyMDIxMjQ7IGRpc3BsYXk6IGJsb2NrOyI+U3VzdGFpbmFiaWxpdHkvUFVFIFN0cmF0ZWd5Ojwvc3Bhbj4gICAgICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDJweCAwIDAgMDsgZm9udC1zaXplOiAxMXB4OyBsaW5lLWhlaWdodDogMS40OyBjb2xvcjogIzNjNDA0MzsiPkNsb3NlZC1sb29wIGxpcXVpZCBjb29saW5nIGFyY2hpdGVjdHVyZXMgdG8gZWxpbWluYXRlIGV4dHJlbWUgZGVzZXJ0IGV2YXBvcmF0aW9uIHdhdGVyIG92ZXJoZWFkcy48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgIDwvZGl2PiAgICAgICAgIDwvZGl2PmApWzBdOwogICAgICAgICAgICAgICAgcG9wdXBfZWY1YjU4YWRkNDg0MTA1YjVjZDA4YmNkZjUyNzNjOTYuc2V0Q29udGVudChodG1sX2NhNTRlNzY1MjMxOTY1MGJhYWI2YmEzZjcwODEyZGM3KTsKICAgICAgICAgICAgCiAgICAgICAgCgogICAgICAgIGNpcmNsZV9tYXJrZXJfMDkyMzBhN2ZiMTM5Zjk2YzAwMTM3NTYyZWExOGUzMzMuYmluZFBvcHVwKHBvcHVwX2VmNWI1OGFkZDQ4NDEwNWI1Y2QwOGJjZGY1MjczYzk2KQogICAgICAgIDsKCiAgICAgICAgCiAgICAKICAgIAogICAgICAgICAgICB2YXIgY2lyY2xlX21hcmtlcl80YzQ2NGU1NzY5MTQxY2MwZTcwZjQwMTJmYjA0YmQ2MiA9IEwuY2lyY2xlTWFya2VyKAogICAgICAgICAgICAgICAgWzMyLjc3NjcsIC05Ni43OTddLAogICAgICAgICAgICAgICAgeyJidWJibGluZ01vdXNlRXZlbnRzIjogdHJ1ZSwgImNvbG9yIjogIiMyMTk2NTMiLCAiZGFzaEFycmF5IjogbnVsbCwgImRhc2hPZmZzZXQiOiBudWxsLCAiZmlsbCI6IHRydWUsICJmaWxsQ29sb3IiOiAiIzIxOTY1MyIsICJmaWxsT3BhY2l0eSI6IDAuNiwgImZpbGxSdWxlIjogImV2ZW5vZGQiLCAibGluZUNhcCI6ICJyb3VuZCIsICJsaW5lSm9pbiI6ICJyb3VuZCIsICJvcGFjaXR5IjogMS4wLCAicmFkaXVzIjogMzIuNCwgInN0cm9rZSI6IHRydWUsICJ3ZWlnaHQiOiAxLjV9CiAgICAgICAgICAgICkuYWRkVG8oZmVhdHVyZV9ncm91cF9hMGQxODA3ZTk2YTRiNDhkODVjNmQ3NzgyYTE0ZjA5Yik7CiAgICAgICAgCiAgICAKICAgICAgICB2YXIgcG9wdXBfMTM2Zjg3MjFiNGI3MjlmNDY0ZDE4ZGIxZGI0ODMyNDYgPSBMLnBvcHVwKHsKICAibWF4V2lkdGgiOiAzMDAsCn0pOwoKICAgICAgICAKICAgICAgICAgICAgCiAgICAgICAgICAgICAgICB2YXIgaHRtbF8wMjk3YzBmNGYyZTk2ZDZmMjRlYWQ2N2VkMWRmMjZkZiA9ICQoYDxkaXYgaWQ9Imh0bWxfMDI5N2MwZjRmMmU5NmQ2ZjI0ZWFkNjdlZDFkZjI2ZGYiIHN0eWxlPSJ3aWR0aDogMTAwLjAlOyBoZWlnaHQ6IDEwMC4wJTsiPiAgICAgICAgIDxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiAnUm9ib3RvJywgc2Fucy1zZXJpZjsgd2lkdGg6IDI4MHB4OyBjb2xvcjogIzIwMjEyNDsiPiAgICAgICAgICAgICA8aDQgc3R5bGU9Im1hcmdpbjogMCAwIDRweCAwOyBmb250LXNpemU6IDE2cHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMWE3M2U4OyI+RGFsbGFzLUZvcnQgV29ydGgsIFRleGFzPC9oND4gICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsgZm9udC1zaXplOiAxMnB4OyBmb250LXdlaWdodDogNTAwOyBjb2xvcjogIzVmNjM2ODsiPlVuaXRlZCBTdGF0ZXM8L3A+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBQaXBlbGluZSBDYXBhY2l0eTwvc3Bhbj4gICAgICAgICAgICAgICAgIDxzdHJvbmcgc3R5bGU9ImZvbnQtc2l6ZTogMTVweDsgY29sb3I6ICMyMDIxMjQ7Ij4xODAwIE1XPC9zdHJvbmc+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC41cHg7IGNvbG9yOiAjNzA3NTdhOyBkaXNwbGF5OiBibG9jazsiPlJlbmV3YWJsZSBBY2Nlc3MgUHJvZmlsZTwvc3Bhbj4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHBhZGRpbmc6IDJweCA4cHg7IGJvcmRlci1yYWRpdXM6IDRweDsgZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBiYWNrZ3JvdW5kLWNvbG9yOiAjMjE5NjUzMjA7IGNvbG9yOiAjMjE5NjUzOyI+ICAgICAgICAgICAgICAgICAgICAg4pePIEhpZ2ggQXZhaWxhYmlsaXR5ICAgICAgICAgICAgICAgICA8L3NwYW4+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyBib3JkZXItdG9wOiAxcHggc29saWQgI2YxZjNmNDsgcGFkZGluZy10b3A6IDZweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMyMDIxMjQ7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBDb25zdHJhaW50czo8L3NwYW4+ICAgICAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAycHggMCAwIDA7IGZvbnQtc2l6ZTogMTFweDsgbGluZS1oZWlnaHQ6IDEuNDsgY29sb3I6ICMzYzQwNDM7Ij5JbmRlcGVuZGVudCBFUkNPVCBHcmlkOyBoaWdoIG1hcmtldCB2b2xhdGlsaXR5IGJ1dCBmbGV4aWJsZSBtaWNyby1ncmlkIGludGVncmF0aW9uIGxhd3MuPC9wPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDRweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMyMDIxMjQ7IGRpc3BsYXk6IGJsb2NrOyI+U3VzdGFpbmFiaWxpdHkvUFVFIFN0cmF0ZWd5Ojwvc3Bhbj4gICAgICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDJweCAwIDAgMDsgZm9udC1zaXplOiAxMXB4OyBsaW5lLWhlaWdodDogMS40OyBjb2xvcjogIzNjNDA0MzsiPkRpcmVjdC10by1jaGlwIHdhcm0gd2F0ZXIgY29vbGluZyBoYW5kbGluZyBoaWdoIGFtYmllbnQgb3V0c2lkZSB0ZW1wZXJhdHVyZXMuPC9wPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICA8L2Rpdj4gICAgICAgICA8L2Rpdj5gKVswXTsKICAgICAgICAgICAgICAgIHBvcHVwXzEzNmY4NzIxYjRiNzI5ZjQ2NGQxOGRiMWRiNDgzMjQ2LnNldENvbnRlbnQoaHRtbF8wMjk3YzBmNGYyZTk2ZDZmMjRlYWQ2N2VkMWRmMjZkZik7CiAgICAgICAgICAgIAogICAgICAgIAoKICAgICAgICBjaXJjbGVfbWFya2VyXzRjNDY0ZTU3NjkxNDFjYzBlNzBmNDAxMmZiMDRiZDYyLmJpbmRQb3B1cChwb3B1cF8xMzZmODcyMWI0YjcyOWY0NjRkMThkYjFkYjQ4MzI0NikKICAgICAgICA7CgogICAgICAgIAogICAgCiAgICAKICAgICAgICAgICAgZmVhdHVyZV9ncm91cF9hMGQxODA3ZTk2YTRiNDhkODVjNmQ3NzgyYTE0ZjA5Yi5hZGRUbyhtYXBfNjUzYzYwOGVlMTM3YmJmODI1ZmY1Y2E1ZTZlNWUzOGUpOwogICAgICAgIAogICAgCiAgICAgICAgICAgIHZhciBmZWF0dXJlX2dyb3VwXzFmMTM5ZDU1NzM4MDI0NjQ0OTUxOTMyYzMwMjdmY2E4ID0gTC5mZWF0dXJlR3JvdXAoCiAgICAgICAgICAgICAgICB7Cn0KICAgICAgICAgICAgKTsKICAgICAgICAKICAgIAogICAgICAgICAgICB2YXIgY2lyY2xlX21hcmtlcl9hMDUzMTk3MTgyNzI2YmFkYTgwN2Y2OGIxZmQ2YTkxMCA9IEwuY2lyY2xlTWFya2VyKAogICAgICAgICAgICAgICAgWzI2LjU4MzMsIDEwNi43MTY3XSwKICAgICAgICAgICAgICAgIHsiYnViYmxpbmdNb3VzZUV2ZW50cyI6IHRydWUsICJjb2xvciI6ICIjMTM3MzMzIiwgImRhc2hBcnJheSI6IG51bGwsICJkYXNoT2Zmc2V0IjogbnVsbCwgImZpbGwiOiB0cnVlLCAiZmlsbENvbG9yIjogIiMxMzczMzMiLCAiZmlsbE9wYWNpdHkiOiAwLjYsICJmaWxsUnVsZSI6ICJldmVub2RkIiwgImxpbmVDYXAiOiAicm91bmQiLCAibGluZUpvaW4iOiAicm91bmQiLCAib3BhY2l0eSI6IDEuMCwgInJhZGl1cyI6IDIxLjYsICJzdHJva2UiOiB0cnVlLCAid2VpZ2h0IjogMS41fQogICAgICAgICAgICApLmFkZFRvKGZlYXR1cmVfZ3JvdXBfMWYxMzlkNTU3MzgwMjQ2NDQ5NTE5MzJjMzAyN2ZjYTgpOwogICAgICAgIAogICAgCiAgICAgICAgdmFyIHBvcHVwXzhjZDI3ODFmYTkwYzQ0NDJkZTA2NTk5YTU4NmRhNjM3ID0gTC5wb3B1cCh7CiAgIm1heFdpZHRoIjogMzAwLAp9KTsKCiAgICAgICAgCiAgICAgICAgICAgIAogICAgICAgICAgICAgICAgdmFyIGh0bWxfNDg5MTY5YjVlNGM1NTFhZDcwNDg0OWZkODM3NDFhY2YgPSAkKGA8ZGl2IGlkPSJodG1sXzQ4OTE2OWI1ZTRjNTUxYWQ3MDQ4NDlmZDgzNzQxYWNmIiBzdHlsZT0id2lkdGg6IDEwMC4wJTsgaGVpZ2h0OiAxMDAuMCU7Ij4gICAgICAgICA8ZGl2IHN0eWxlPSJmb250LWZhbWlseTogJ1JvYm90bycsIHNhbnMtc2VyaWY7IHdpZHRoOiAyODBweDsgY29sb3I6ICMyMDIxMjQ7Ij4gICAgICAgICAgICAgPGg0IHN0eWxlPSJtYXJnaW46IDAgMCA0cHggMDsgZm9udC1zaXplOiAxNnB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzFhNzNlODsiPkd1aXpob3UgSHViIChHdWl5YW5nKTwvaDQ+ICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7IGZvbnQtc2l6ZTogMTJweDsgZm9udC13ZWlnaHQ6IDUwMDsgY29sb3I6ICM1ZjYzNjg7Ij5DaGluYTwvcD4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IDAuNXB4OyBjb2xvcjogIzcwNzU3YTsgZGlzcGxheTogYmxvY2s7Ij5HcmlkIFBpcGVsaW5lIENhcGFjaXR5PC9zcGFuPiAgICAgICAgICAgICAgICAgPHN0cm9uZyBzdHlsZT0iZm9udC1zaXplOiAxNXB4OyBjb2xvcjogIzIwMjEyNDsiPjEyMDAgTVc8L3N0cm9uZz4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+UmVuZXdhYmxlIEFjY2VzcyBQcm9maWxlPC9zcGFuPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgcGFkZGluZzogMnB4IDhweDsgYm9yZGVyLXJhZGl1czogNHB4OyBmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGJhY2tncm91bmQtY29sb3I6ICMxMzczMzMyMDsgY29sb3I6ICMxMzczMzM7Ij4gICAgICAgICAgICAgICAgICAgICDil48gVmVyeSBIaWdoIEF2YWlsYWJpbGl0eSAgICAgICAgICAgICAgICAgPC9zcGFuPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNmMWYzZjQ7IHBhZGRpbmctdG9wOiA2cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMjAyMTI0OyBkaXNwbGF5OiBibG9jazsiPkdyaWQgQ29uc3RyYWludHM6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+TmF0aW9uYWwgJ+S4nOaVsOilv+eulycgYW5jaG9yLiBIaWdobHkgcm9idXN0IHJlZ2lvbmFsIHBvd2VyIGJhY2tib25lLjwvcD4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA0cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMjAyMTI0OyBkaXNwbGF5OiBibG9jazsiPlN1c3RhaW5hYmlsaXR5L1BVRSBTdHJhdGVneTo8L3NwYW4+ICAgICAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAycHggMCAwIDA7IGZvbnQtc2l6ZTogMTFweDsgbGluZS1oZWlnaHQ6IDEuNDsgY29sb3I6ICMzYzQwNDM7Ij5OYXR1cmFsIGNhdmUtaW5zdWxhdGVkIGZhY2lsaXR5IHN0cnVjdHVyZXMgYW5kIHllYXItcm91bmQgYW1iaWVudCBjb29sLWFpciBjaXJjdWxhdGlvbi48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgIDwvZGl2PiAgICAgICAgIDwvZGl2PmApWzBdOwogICAgICAgICAgICAgICAgcG9wdXBfOGNkMjc4MWZhOTBjNDQ0MmRlMDY1OTlhNTg2ZGE2Mzcuc2V0Q29udGVudChodG1sXzQ4OTE2OWI1ZTRjNTUxYWQ3MDQ4NDlmZDgzNzQxYWNmKTsKICAgICAgICAgICAgCiAgICAgICAgCgogICAgICAgIGNpcmNsZV9tYXJrZXJfYTA1MzE5NzE4MjcyNmJhZGE4MDdmNjhiMWZkNmE5MTAuYmluZFBvcHVwKHBvcHVwXzhjZDI3ODFmYTkwYzQ0NDJkZTA2NTk5YTU4NmRhNjM3KQogICAgICAgIDsKCiAgICAgICAgCiAgICAKICAgIAogICAgICAgICAgICB2YXIgY2lyY2xlX21hcmtlcl82NmZlMzRmZDBkNWQ1NzY5YTQ3NjEzODE2NTI2ZDZkNyA9IEwuY2lyY2xlTWFya2VyKAogICAgICAgICAgICAgICAgWzQxLjAzMTIsIDExMy4xMTQxXSwKICAgICAgICAgICAgICAgIHsiYnViYmxpbmdNb3VzZUV2ZW50cyI6IHRydWUsICJjb2xvciI6ICIjMjE5NjUzIiwgImRhc2hBcnJheSI6IG51bGwsICJkYXNoT2Zmc2V0IjogbnVsbCwgImZpbGwiOiB0cnVlLCAiZmlsbENvbG9yIjogIiMyMTk2NTMiLCAiZmlsbE9wYWNpdHkiOiAwLjYsICJmaWxsUnVsZSI6ICJldmVub2RkIiwgImxpbmVDYXAiOiAicm91bmQiLCAibGluZUpvaW4iOiAicm91bmQiLCAib3BhY2l0eSI6IDEuMCwgInJhZGl1cyI6IDE3LjEsICJzdHJva2UiOiB0cnVlLCAid2VpZ2h0IjogMS41fQogICAgICAgICAgICApLmFkZFRvKGZlYXR1cmVfZ3JvdXBfMWYxMzlkNTU3MzgwMjQ2NDQ5NTE5MzJjMzAyN2ZjYTgpOwogICAgICAgIAogICAgCiAgICAgICAgdmFyIHBvcHVwX2Q2ZTBmODYwOWUwZjFmNzc0OTZhOGUwYTBiZTAxZWIxID0gTC5wb3B1cCh7CiAgIm1heFdpZHRoIjogMzAwLAp9KTsKCiAgICAgICAgCiAgICAgICAgICAgIAogICAgICAgICAgICAgICAgdmFyIGh0bWxfODgyY2U1YWIxM2NhZGRlMzY4MmI5NWE1YWM5MTc0Y2UgPSAkKGA8ZGl2IGlkPSJodG1sXzg4MmNlNWFiMTNjYWRkZTM2ODJiOTVhNWFjOTE3NGNlIiBzdHlsZT0id2lkdGg6IDEwMC4wJTsgaGVpZ2h0OiAxMDAuMCU7Ij4gICAgICAgICA8ZGl2IHN0eWxlPSJmb250LWZhbWlseTogJ1JvYm90bycsIHNhbnMtc2VyaWY7IHdpZHRoOiAyODBweDsgY29sb3I6ICMyMDIxMjQ7Ij4gICAgICAgICAgICAgPGg0IHN0eWxlPSJtYXJnaW46IDAgMCA0cHggMDsgZm9udC1zaXplOiAxNnB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzFhNzNlODsiPklubmVyIE1vbmdvbGlhIEh1YiAoVWxhbnFhYik8L2g0PiAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyBmb250LXNpemU6IDEycHg7IGZvbnQtd2VpZ2h0OiA1MDA7IGNvbG9yOiAjNWY2MzY4OyI+Q2hpbmE8L3A+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBQaXBlbGluZSBDYXBhY2l0eTwvc3Bhbj4gICAgICAgICAgICAgICAgIDxzdHJvbmcgc3R5bGU9ImZvbnQtc2l6ZTogMTVweDsgY29sb3I6ICMyMDIxMjQ7Ij45NTAgTVc8L3N0cm9uZz4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+UmVuZXdhYmxlIEFjY2VzcyBQcm9maWxlPC9zcGFuPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgcGFkZGluZzogMnB4IDhweDsgYm9yZGVyLXJhZGl1czogNHB4OyBmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGJhY2tncm91bmQtY29sb3I6ICMyMTk2NTMyMDsgY29sb3I6ICMyMTk2NTM7Ij4gICAgICAgICAgICAgICAgICAgICDil48gSGlnaCBBdmFpbGFiaWxpdHkgICAgICAgICAgICAgICAgIDwvc3Bhbj4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZjFmM2Y0OyBwYWRkaW5nLXRvcDogNnB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5HcmlkIENvbnN0cmFpbnRzOjwvc3Bhbj4gICAgICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDJweCAwIDAgMDsgZm9udC1zaXplOiAxMXB4OyBsaW5lLWhlaWdodDogMS40OyBjb2xvcjogIzNjNDA0MzsiPkFidW5kYW50IHBvd2VyIHN1cHBseTsgZGlyZWN0bHkgbGlua2VkIHRvIE5vcnRoZXJuIENoaW5hIHBvd2VyIG5ldHdvcmsgZXhwb3J0cy48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogNHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5TdXN0YWluYWJpbGl0eS9QVUUgU3RyYXRlZ3k6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+RXh0cmVtZSB3aW50ZXIgZnJlZS1haXIgY29vbGluZyBsb29wcyBhY2hpZXZpbmcgc3ViLTEuMTUgZGVzaWduIFBVRSB0YXJnZXRzLjwvcD4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgPC9kaXY+ICAgICAgICAgPC9kaXY+YClbMF07CiAgICAgICAgICAgICAgICBwb3B1cF9kNmUwZjg2MDllMGYxZjc3NDk2YThlMGEwYmUwMWViMS5zZXRDb250ZW50KGh0bWxfODgyY2U1YWIxM2NhZGRlMzY4MmI5NWE1YWM5MTc0Y2UpOwogICAgICAgICAgICAKICAgICAgICAKCiAgICAgICAgY2lyY2xlX21hcmtlcl82NmZlMzRmZDBkNWQ1NzY5YTQ3NjEzODE2NTI2ZDZkNy5iaW5kUG9wdXAocG9wdXBfZDZlMGY4NjA5ZTBmMWY3NzQ5NmE4ZTBhMGJlMDFlYjEpCiAgICAgICAgOwoKICAgICAgICAKICAgIAogICAgCiAgICAgICAgICAgIHZhciBjaXJjbGVfbWFya2VyX2I2MjAwMDE0ZTdhOWNlZjY3YTUyMGNiYmFmMzE0YjZmID0gTC5jaXJjbGVNYXJrZXIoCiAgICAgICAgICAgICAgICBbMzEuMjMwNCwgMTIxLjQ3MzddLAogICAgICAgICAgICAgICAgeyJidWJibGluZ01vdXNlRXZlbnRzIjogdHJ1ZSwgImNvbG9yIjogIiNlYjU3NTciLCAiZGFzaEFycmF5IjogbnVsbCwgImRhc2hPZmZzZXQiOiBudWxsLCAiZmlsbCI6IHRydWUsICJmaWxsQ29sb3IiOiAiI2ViNTc1NyIsICJmaWxsT3BhY2l0eSI6IDAuNiwgImZpbGxSdWxlIjogImV2ZW5vZGQiLCAibGluZUNhcCI6ICJyb3VuZCIsICJsaW5lSm9pbiI6ICJyb3VuZCIsICJvcGFjaXR5IjogMS4wLCAicmFkaXVzIjogMjguOCwgInN0cm9rZSI6IHRydWUsICJ3ZWlnaHQiOiAxLjV9CiAgICAgICAgICAgICkuYWRkVG8oZmVhdHVyZV9ncm91cF8xZjEzOWQ1NTczODAyNDY0NDk1MTkzMmMzMDI3ZmNhOCk7CiAgICAgICAgCiAgICAKICAgICAgICB2YXIgcG9wdXBfN2FlNDhhNWYyZWVlMGFhMDI2ZjA3ZWMzNGMyYjNkZTMgPSBMLnBvcHVwKHsKICAibWF4V2lkdGgiOiAzMDAsCn0pOwoKICAgICAgICAKICAgICAgICAgICAgCiAgICAgICAgICAgICAgICB2YXIgaHRtbF81OTc1NDhkNzg3Y2IzZDkzYzFlNTg5YjdlZWExMWMxMiA9ICQoYDxkaXYgaWQ9Imh0bWxfNTk3NTQ4ZDc4N2NiM2Q5M2MxZTU4OWI3ZWVhMTFjMTIiIHN0eWxlPSJ3aWR0aDogMTAwLjAlOyBoZWlnaHQ6IDEwMC4wJTsiPiAgICAgICAgIDxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiAnUm9ib3RvJywgc2Fucy1zZXJpZjsgd2lkdGg6IDI4MHB4OyBjb2xvcjogIzIwMjEyNDsiPiAgICAgICAgICAgICA8aDQgc3R5bGU9Im1hcmdpbjogMCAwIDRweCAwOyBmb250LXNpemU6IDE2cHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMWE3M2U4OyI+WWFuZ3R6ZSBSaXZlciBEZWx0YSBIdWI8L2g0PiAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyBmb250LXNpemU6IDEycHg7IGZvbnQtd2VpZ2h0OiA1MDA7IGNvbG9yOiAjNWY2MzY4OyI+Q2hpbmE8L3A+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBQaXBlbGluZSBDYXBhY2l0eTwvc3Bhbj4gICAgICAgICAgICAgICAgIDxzdHJvbmcgc3R5bGU9ImZvbnQtc2l6ZTogMTVweDsgY29sb3I6ICMyMDIxMjQ7Ij4xNjAwIE1XPC9zdHJvbmc+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC41cHg7IGNvbG9yOiAjNzA3NTdhOyBkaXNwbGF5OiBibG9jazsiPlJlbmV3YWJsZSBBY2Nlc3MgUHJvZmlsZTwvc3Bhbj4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHBhZGRpbmc6IDJweCA4cHg7IGJvcmRlci1yYWRpdXM6IDRweDsgZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBiYWNrZ3JvdW5kLWNvbG9yOiAjZWI1NzU3MjA7IGNvbG9yOiAjZWI1NzU3OyI+ICAgICAgICAgICAgICAgICAgICAg4pePIExvdyBBdmFpbGFiaWxpdHkgICAgICAgICAgICAgICAgIDwvc3Bhbj4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZjFmM2Y0OyBwYWRkaW5nLXRvcDogNnB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5HcmlkIENvbnN0cmFpbnRzOjwvc3Bhbj4gICAgICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDJweCAwIDAgMDsgZm9udC1zaXplOiAxMXB4OyBsaW5lLWhlaWdodDogMS40OyBjb2xvcjogIzNjNDA0MzsiPlVsdHJhLWhpZ2ggYmFzZWxpbmUgaW5kdXN0cmlhbCBkZW1hbmQ7IGV4dHJlbWUgbGFuZCBhbmQgZ3JpZCBkZW5zaXR5IGNvbnN0cmFpbnRzLjwvcD4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA0cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMjAyMTI0OyBkaXNwbGF5OiBibG9jazsiPlN1c3RhaW5hYmlsaXR5L1BVRSBTdHJhdGVneTo8L3NwYW4+ICAgICAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAycHggMCAwIDA7IGZvbnQtc2l6ZTogMTFweDsgbGluZS1oZWlnaHQ6IDEuNDsgY29sb3I6ICMzYzQwNDM7Ij5BSS1vcHRpbWl6ZWQgYWxnb3JpdGhtaWMgY2hpbGxpbmcgcGxhbnRzIGFuZCBkZWVwIG1hcmluZS9yaXZlciBoZWF0IGV4Y2hhbmdlcnMuPC9wPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICA8L2Rpdj4gICAgICAgICA8L2Rpdj5gKVswXTsKICAgICAgICAgICAgICAgIHBvcHVwXzdhZTQ4YTVmMmVlZTBhYTAyNmYwN2VjMzRjMmIzZGUzLnNldENvbnRlbnQoaHRtbF81OTc1NDhkNzg3Y2IzZDkzYzFlNTg5YjdlZWExMWMxMik7CiAgICAgICAgICAgIAogICAgICAgIAoKICAgICAgICBjaXJjbGVfbWFya2VyX2I2MjAwMDE0ZTdhOWNlZjY3YTUyMGNiYmFmMzE0YjZmLmJpbmRQb3B1cChwb3B1cF83YWU0OGE1ZjJlZWUwYWEwMjZmMDdlYzM0YzJiM2RlMykKICAgICAgICA7CgogICAgICAgIAogICAgCiAgICAKICAgICAgICAgICAgZmVhdHVyZV9ncm91cF8xZjEzOWQ1NTczODAyNDY0NDk1MTkzMmMzMDI3ZmNhOC5hZGRUbyhtYXBfNjUzYzYwOGVlMTM3YmJmODI1ZmY1Y2E1ZTZlNWUzOGUpOwogICAgICAgIAogICAgCiAgICAgICAgICAgIHZhciBmZWF0dXJlX2dyb3VwXzI5MzhjMDdkYzczMDUxMTFiZDVhZGVkYzNlYTc5YjY1ID0gTC5mZWF0dXJlR3JvdXAoCiAgICAgICAgICAgICAgICB7Cn0KICAgICAgICAgICAgKTsKICAgICAgICAKICAgIAogICAgICAgICAgICB2YXIgY2lyY2xlX21hcmtlcl9mOWMxMGVkNjRmNjg5YzVlYTAzZTU2OGE1MDVmY2UwOSA9IEwuY2lyY2xlTWFya2VyKAogICAgICAgICAgICAgICAgWzE5LjAzMywgNzMuMDI5N10sCiAgICAgICAgICAgICAgICB7ImJ1YmJsaW5nTW91c2VFdmVudHMiOiB0cnVlLCAiY29sb3IiOiAiI2YyOTk0YSIsICJkYXNoQXJyYXkiOiBudWxsLCAiZGFzaE9mZnNldCI6IG51bGwsICJmaWxsIjogdHJ1ZSwgImZpbGxDb2xvciI6ICIjZjI5OTRhIiwgImZpbGxPcGFjaXR5IjogMC42LCAiZmlsbFJ1bGUiOiAiZXZlbm9kZCIsICJsaW5lQ2FwIjogInJvdW5kIiwgImxpbmVKb2luIjogInJvdW5kIiwgIm9wYWNpdHkiOiAxLjAsICJyYWRpdXMiOiAzOS42LCAic3Ryb2tlIjogdHJ1ZSwgIndlaWdodCI6IDEuNX0KICAgICAgICAgICAgKS5hZGRUbyhmZWF0dXJlX2dyb3VwXzI5MzhjMDdkYzczMDUxMTFiZDVhZGVkYzNlYTc5YjY1KTsKICAgICAgICAKICAgIAogICAgICAgIHZhciBwb3B1cF9lMDBlNTY3NTNkNGFjZjQzYjM0YWMzMDkxNThjNzMxNCA9IEwucG9wdXAoewogICJtYXhXaWR0aCI6IDMwMCwKfSk7CgogICAgICAgIAogICAgICAgICAgICAKICAgICAgICAgICAgICAgIHZhciBodG1sX2QzNjgyMWNiYjVkNTI1ZDY0ZjYzNjZhNTE0MGZmNDlkID0gJChgPGRpdiBpZD0iaHRtbF9kMzY4MjFjYmI1ZDUyNWQ2NGY2MzY2YTUxNDBmZjQ5ZCIgc3R5bGU9IndpZHRoOiAxMDAuMCU7IGhlaWdodDogMTAwLjAlOyI+ICAgICAgICAgPGRpdiBzdHlsZT0iZm9udC1mYW1pbHk6ICdSb2JvdG8nLCBzYW5zLXNlcmlmOyB3aWR0aDogMjgwcHg7IGNvbG9yOiAjMjAyMTI0OyI+ICAgICAgICAgICAgIDxoNCBzdHlsZT0ibWFyZ2luOiAwIDAgNHB4IDA7IGZvbnQtc2l6ZTogMTZweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMxYTczZTg7Ij5NdW1iYWkgLyBOYXZpIE11bWJhaTwvaDQ+ICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7IGZvbnQtc2l6ZTogMTJweDsgZm9udC13ZWlnaHQ6IDUwMDsgY29sb3I6ICM1ZjYzNjg7Ij5JbmRpYTwvcD4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IDAuNXB4OyBjb2xvcjogIzcwNzU3YTsgZGlzcGxheTogYmxvY2s7Ij5HcmlkIFBpcGVsaW5lIENhcGFjaXR5PC9zcGFuPiAgICAgICAgICAgICAgICAgPHN0cm9uZyBzdHlsZT0iZm9udC1zaXplOiAxNXB4OyBjb2xvcjogIzIwMjEyNDsiPjIyMDAgTVc8L3N0cm9uZz4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+UmVuZXdhYmxlIEFjY2VzcyBQcm9maWxlPC9zcGFuPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgcGFkZGluZzogMnB4IDhweDsgYm9yZGVyLXJhZGl1czogNHB4OyBmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGJhY2tncm91bmQtY29sb3I6ICNmMjk5NGEyMDsgY29sb3I6ICNmMjk5NGE7Ij4gICAgICAgICAgICAgICAgICAgICDil48gTW9kZXJhdGUgQXZhaWxhYmlsaXR5ICAgICAgICAgICAgICAgICA8L3NwYW4+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyBib3JkZXItdG9wOiAxcHggc29saWQgI2YxZjNmNDsgcGFkZGluZy10b3A6IDZweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMyMDIxMjQ7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBDb25zdHJhaW50czo8L3NwYW4+ICAgICAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAycHggMCAwIDA7IGZvbnQtc2l6ZTogMTFweDsgbGluZS1oZWlnaHQ6IDEuNDsgY29sb3I6ICMzYzQwNDM7Ij5IaWdoZXN0IGdyaWQgcmVsaWFiaWxpdHkgaW4gSW5kaWE7IG1ham9yIGludGVybmF0aW9uYWwgc3Vic2VhIGNhYmxlIGxhbmRpbmcgaHViLjwvcD4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA0cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMjAyMTI0OyBkaXNwbGF5OiBibG9jazsiPlN1c3RhaW5hYmlsaXR5L1BVRSBTdHJhdGVneTo8L3NwYW4+ICAgICAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAycHggMCAwIDA7IGZvbnQtc2l6ZTogMTFweDsgbGluZS1oZWlnaHQ6IDEuNDsgY29sb3I6ICMzYzQwNDM7Ij5JbmR1c3RyaWFsLXNjYWxlIGNlbnRyaWZ1Z2FsIGNoaWxsZXJzIHdpdGggc2VhLWJyZWV6ZSBwcmUtY29vbGluZyBmaWx0cmF0aW9uLjwvcD4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgPC9kaXY+ICAgICAgICAgPC9kaXY+YClbMF07CiAgICAgICAgICAgICAgICBwb3B1cF9lMDBlNTY3NTNkNGFjZjQzYjM0YWMzMDkxNThjNzMxNC5zZXRDb250ZW50KGh0bWxfZDM2ODIxY2JiNWQ1MjVkNjRmNjM2NmE1MTQwZmY0OWQpOwogICAgICAgICAgICAKICAgICAgICAKCiAgICAgICAgY2lyY2xlX21hcmtlcl9mOWMxMGVkNjRmNjg5YzVlYTAzZTU2OGE1MDVmY2UwOS5iaW5kUG9wdXAocG9wdXBfZTAwZTU2NzUzZDRhY2Y0M2IzNGFjMzA5MTU4YzczMTQpCiAgICAgICAgOwoKICAgICAgICAKICAgIAogICAgCiAgICAgICAgICAgIHZhciBjaXJjbGVfbWFya2VyXzBiMGFlYjNlMTBiMTYyODRjMDczZjhjZWIxYjcwNGUxID0gTC5jaXJjbGVNYXJrZXIoCiAgICAgICAgICAgICAgICBbMTIuOTcxNiwgNzcuNTk0Nl0sCiAgICAgICAgICAgICAgICB7ImJ1YmJsaW5nTW91c2VFdmVudHMiOiB0cnVlLCAiY29sb3IiOiAiIzIxOTY1MyIsICJkYXNoQXJyYXkiOiBudWxsLCAiZGFzaE9mZnNldCI6IG51bGwsICJmaWxsIjogdHJ1ZSwgImZpbGxDb2xvciI6ICIjMjE5NjUzIiwgImZpbGxPcGFjaXR5IjogMC42LCAiZmlsbFJ1bGUiOiAiZXZlbm9kZCIsICJsaW5lQ2FwIjogInJvdW5kIiwgImxpbmVKb2luIjogInJvdW5kIiwgIm9wYWNpdHkiOiAxLjAsICJyYWRpdXMiOiAxNS4zLCAic3Ryb2tlIjogdHJ1ZSwgIndlaWdodCI6IDEuNX0KICAgICAgICAgICAgKS5hZGRUbyhmZWF0dXJlX2dyb3VwXzI5MzhjMDdkYzczMDUxMTFiZDVhZGVkYzNlYTc5YjY1KTsKICAgICAgICAKICAgIAogICAgICAgIHZhciBwb3B1cF84N2VjZTNhMzQ4MmMxZGM0MTEyMzBmN2I0MGM5ZDdlNiA9IEwucG9wdXAoewogICJtYXhXaWR0aCI6IDMwMCwKfSk7CgogICAgICAgIAogICAgICAgICAgICAKICAgICAgICAgICAgICAgIHZhciBodG1sXzdmNDBhMzU1MDkwMzkwYjRlNTZjM2VjNzFlOWM0MjBlID0gJChgPGRpdiBpZD0iaHRtbF83ZjQwYTM1NTA5MDM5MGI0ZTU2YzNlYzcxZTljNDIwZSIgc3R5bGU9IndpZHRoOiAxMDAuMCU7IGhlaWdodDogMTAwLjAlOyI+ICAgICAgICAgPGRpdiBzdHlsZT0iZm9udC1mYW1pbHk6ICdSb2JvdG8nLCBzYW5zLXNlcmlmOyB3aWR0aDogMjgwcHg7IGNvbG9yOiAjMjAyMTI0OyI+ICAgICAgICAgICAgIDxoNCBzdHlsZT0ibWFyZ2luOiAwIDAgNHB4IDA7IGZvbnQtc2l6ZTogMTZweDsgZm9udC13ZWlnaHQ6IDcwMDsgY29sb3I6ICMxYTczZTg7Ij5CZW5nYWx1cnUgKEthcm5hdGFrYSk8L2g0PiAgICAgICAgICAgICA8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyBmb250LXNpemU6IDEycHg7IGZvbnQtd2VpZ2h0OiA1MDA7IGNvbG9yOiAjNWY2MzY4OyI+SW5kaWE8L3A+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+R3JpZCBQaXBlbGluZSBDYXBhY2l0eTwvc3Bhbj4gICAgICAgICAgICAgICAgIDxzdHJvbmcgc3R5bGU9ImZvbnQtc2l6ZTogMTVweDsgY29sb3I6ICMyMDIxMjQ7Ij44NTAgTVc8L3N0cm9uZz4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgY29sb3I6ICM3MDc1N2E7IGRpc3BsYXk6IGJsb2NrOyI+UmVuZXdhYmxlIEFjY2VzcyBQcm9maWxlPC9zcGFuPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgcGFkZGluZzogMnB4IDhweDsgYm9yZGVyLXJhZGl1czogNHB4OyBmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGJhY2tncm91bmQtY29sb3I6ICMyMTk2NTMyMDsgY29sb3I6ICMyMTk2NTM7Ij4gICAgICAgICAgICAgICAgICAgICDil48gSGlnaCBBdmFpbGFiaWxpdHkgICAgICAgICAgICAgICAgIDwvc3Bhbj4gICAgICAgICAgICAgPC9kaXY+ICAgICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPSJtYXJnaW4tYm90dG9tOiA4cHg7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZjFmM2Y0OyBwYWRkaW5nLXRvcDogNnB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5HcmlkIENvbnN0cmFpbnRzOjwvc3Bhbj4gICAgICAgICAgICAgICAgIDxwIHN0eWxlPSJtYXJnaW46IDJweCAwIDAgMDsgZm9udC1zaXplOiAxMXB4OyBsaW5lLWhlaWdodDogMS40OyBjb2xvcjogIzNjNDA0MzsiPkhpZ2hseSBzdGFibGUgdGVjaG5vbG9neSBwYXJrIGRpc3RyaWJ1dGlvbjsgcHJvZ3Jlc3NpdmUgc3RhdGUgd2hlZWxpbmcgb3Blbi1hY2Nlc3MgbGF3cy48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogNHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5TdXN0YWluYWJpbGl0eS9QVUUgU3RyYXRlZ3k6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+QWRpYWJhdGljIGNvb2xpbmcgc3lzdGVtcyBvcHRpbWl6ZWQgZm9yIEJlbmdhbHVydSdzIGVsZXZhdGVkLCBtb2RlcmF0ZSBhbHRpdHVkZSBjbGltYXRlIHBsYXRlYXUuPC9wPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICA8L2Rpdj4gICAgICAgICA8L2Rpdj5gKVswXTsKICAgICAgICAgICAgICAgIHBvcHVwXzg3ZWNlM2EzNDgyYzFkYzQxMTIzMGY3YjQwYzlkN2U2LnNldENvbnRlbnQoaHRtbF83ZjQwYTM1NTA5MDM5MGI0ZTU2YzNlYzcxZTljNDIwZSk7CiAgICAgICAgICAgIAogICAgICAgIAoKICAgICAgICBjaXJjbGVfbWFya2VyXzBiMGFlYjNlMTBiMTYyODRjMDczZjhjZWIxYjcwNGUxLmJpbmRQb3B1cChwb3B1cF84N2VjZTNhMzQ4MmMxZGM0MTEyMzBmN2I0MGM5ZDdlNikKICAgICAgICA7CgogICAgICAgIAogICAgCiAgICAKICAgICAgICAgICAgdmFyIGNpcmNsZV9tYXJrZXJfZjJjZDhhYjJmNGU5MWNjMjc5NzkxY2UwY2Q4YWZmZWYgPSBMLmNpcmNsZU1hcmtlcigKICAgICAgICAgICAgICAgIFsxMy4wODI3LCA4MC4yNzA3XSwKICAgICAgICAgICAgICAgIHsiYnViYmxpbmdNb3VzZUV2ZW50cyI6IHRydWUsICJjb2xvciI6ICIjMjE5NjUzIiwgImRhc2hBcnJheSI6IG51bGwsICJkYXNoT2Zmc2V0IjogbnVsbCwgImZpbGwiOiB0cnVlLCAiZmlsbENvbG9yIjogIiMyMTk2NTMiLCAiZmlsbE9wYWNpdHkiOiAwLjYsICJmaWxsUnVsZSI6ICJldmVub2RkIiwgImxpbmVDYXAiOiAicm91bmQiLCAibGluZUpvaW4iOiAicm91bmQiLCAib3BhY2l0eSI6IDEuMCwgInJhZGl1cyI6IDE5LjgsICJzdHJva2UiOiB0cnVlLCAid2VpZ2h0IjogMS41fQogICAgICAgICAgICApLmFkZFRvKGZlYXR1cmVfZ3JvdXBfMjkzOGMwN2RjNzMwNTExMWJkNWFkZWRjM2VhNzliNjUpOwogICAgICAgIAogICAgCiAgICAgICAgdmFyIHBvcHVwX2Q0YjcyYzA4YTQxZWM0MWE5Y2Q4ZjJjMmQzNWY2OTFjID0gTC5wb3B1cCh7CiAgIm1heFdpZHRoIjogMzAwLAp9KTsKCiAgICAgICAgCiAgICAgICAgICAgIAogICAgICAgICAgICAgICAgdmFyIGh0bWxfMDI1YWJhNGQ4ODMxODY3ZGI4ZjZjYzVkZjcyMTQyODAgPSAkKGA8ZGl2IGlkPSJodG1sXzAyNWFiYTRkODgzMTg2N2RiOGY2Y2M1ZGY3MjE0MjgwIiBzdHlsZT0id2lkdGg6IDEwMC4wJTsgaGVpZ2h0OiAxMDAuMCU7Ij4gICAgICAgICA8ZGl2IHN0eWxlPSJmb250LWZhbWlseTogJ1JvYm90bycsIHNhbnMtc2VyaWY7IHdpZHRoOiAyODBweDsgY29sb3I6ICMyMDIxMjQ7Ij4gICAgICAgICAgICAgPGg0IHN0eWxlPSJtYXJnaW46IDAgMCA0cHggMDsgZm9udC1zaXplOiAxNnB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzFhNzNlODsiPkNoZW5uYWkgKFRhbWlsIE5hZHUpPC9oND4gICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsgZm9udC1zaXplOiAxMnB4OyBmb250LXdlaWdodDogNTAwOyBjb2xvcjogIzVmNjM2ODsiPkluZGlhPC9wPiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogOHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC41cHg7IGNvbG9yOiAjNzA3NTdhOyBkaXNwbGF5OiBibG9jazsiPkdyaWQgUGlwZWxpbmUgQ2FwYWNpdHk8L3NwYW4+ICAgICAgICAgICAgICAgICA8c3Ryb25nIHN0eWxlPSJmb250LXNpemU6IDE1cHg7IGNvbG9yOiAjMjAyMTI0OyI+MTEwMCBNVzwvc3Ryb25nPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsiPiAgICAgICAgICAgICAgICAgPHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTFweDsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGV0dGVyLXNwYWNpbmc6IDAuNXB4OyBjb2xvcjogIzcwNzU3YTsgZGlzcGxheTogYmxvY2s7Ij5SZW5ld2FibGUgQWNjZXNzIFByb2ZpbGU8L3NwYW4+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyBwYWRkaW5nOiAycHggOHB4OyBib3JkZXItcmFkaXVzOiA0cHg7IGZvbnQtc2l6ZTogMTFweDsgZm9udC13ZWlnaHQ6IDcwMDsgYmFja2dyb3VuZC1jb2xvcjogIzIxOTY1MzIwOyBjb2xvcjogIzIxOTY1MzsiPiAgICAgICAgICAgICAgICAgICAgIOKXjyBIaWdoIEF2YWlsYWJpbGl0eSAgICAgICAgICAgICAgICAgPC9zcGFuPiAgICAgICAgICAgICA8L2Rpdj4gICAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDhweDsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNmMWYzZjQ7IHBhZGRpbmctdG9wOiA2cHg7Ij4gICAgICAgICAgICAgICAgIDxzcGFuIHN0eWxlPSJmb250LXNpemU6IDExcHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGNvbG9yOiAjMjAyMTI0OyBkaXNwbGF5OiBibG9jazsiPkdyaWQgQ29uc3RyYWludHM6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+Um9idXN0IG1hbnVmYWN0dXJpbmcgY29ycmlkb3IgZ3JpZDsgc3RyYXRlZ2ljIEVhc3QtQXNpYW4gc3Vic2VhIG5ldHdvcmsgZ2F0ZXdheS48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT0ibWFyZ2luLWJvdHRvbTogNHB4OyI+ICAgICAgICAgICAgICAgICA8c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMXB4OyBmb250LXdlaWdodDogNzAwOyBjb2xvcjogIzIwMjEyNDsgZGlzcGxheTogYmxvY2s7Ij5TdXN0YWluYWJpbGl0eS9QVUUgU3RyYXRlZ3k6PC9zcGFuPiAgICAgICAgICAgICAgICAgPHAgc3R5bGU9Im1hcmdpbjogMnB4IDAgMCAwOyBmb250LXNpemU6IDExcHg7IGxpbmUtaGVpZ2h0OiAxLjQ7IGNvbG9yOiAjM2M0MDQzOyI+VmFwb3IgY29tcHJlc3Npb24gY3ljbGVzIHJ1bm5pbmcgb24gaW50ZWxsaWdlbnQgdmFyaWFibGUgc3BlZWQgZHJpdmVzIHRvIGNvdW50ZXIgY29hc3RhbCBodW1pZGl0eS48L3A+ICAgICAgICAgICAgIDwvZGl2PiAgICAgICAgIDwvZGl2PiAgICAgICAgIDwvZGl2PmApWzBdOwogICAgICAgICAgICAgICAgcG9wdXBfZDRiNzJjMDhhNDFlYzQxYTljZDhmMmMyZDM1ZjY5MWMuc2V0Q29udGVudChodG1sXzAyNWFiYTRkODgzMTg2N2RiOGY2Y2M1ZGY3MjE0MjgwKTsKICAgICAgICAgICAgCiAgICAgICAgCgogICAgICAgIGNpcmNsZV9tYXJrZXJfZjJjZDhhYjJmNGU5MWNjMjc5NzkxY2UwY2Q4YWZmZWYuYmluZFBvcHVwKHBvcHVwX2Q0YjcyYzA4YTQxZWM0MWE5Y2Q4ZjJjMmQzNWY2OTFjKQogICAgICAgIDsKCiAgICAgICAgCiAgICAKICAgIAogICAgICAgICAgICBmZWF0dXJlX2dyb3VwXzI5MzhjMDdkYzczMDUxMTFiZDVhZGVkYzNlYTc5YjY1LmFkZFRvKG1hcF82NTNjNjA4ZWUxMzdiYmY4MjVmZjVjYTVlNmU1ZTM4ZSk7CiAgICAgICAgCiAgICAKICAgICAgICAgICAgdmFyIGxheWVyX2NvbnRyb2xfZmU0YTgxNzUwZTYxN2UxMTA1YTA4MjRkMTdhMmIxYzZfbGF5ZXJzID0gewogICAgICAgICAgICAgICAgYmFzZV9sYXllcnMgOiB7CiAgICAgICAgICAgICAgICAgICAgImNhcnRvZGJwb3NpdHJvbiIgOiB0aWxlX2xheWVyX2I3OGFiNGMwYjFlOTQ5OWY5NDE2NWY5ZjBjN2UzMzY2LAogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgIG92ZXJsYXlzIDogIHsKICAgICAgICAgICAgICAgICAgICAiVW5pdGVkIFN0YXRlcyBIdWJzIiA6IGZlYXR1cmVfZ3JvdXBfYTBkMTgwN2U5NmE0YjQ4ZDg1YzZkNzc4MmExNGYwOWIsCiAgICAgICAgICAgICAgICAgICAgIkNoaW5hIChcdTRlMWNcdTY1NzBcdTg5N2ZcdTdiOTcpIEh1YnMiIDogZmVhdHVyZV9ncm91cF8xZjEzOWQ1NTczODAyNDY0NDk1MTkzMmMzMDI3ZmNhOCwKICAgICAgICAgICAgICAgICAgICAiSW5kaWEgQ2x1c3RlcnMiIDogZmVhdHVyZV9ncm91cF8yOTM4YzA3ZGM3MzA1MTExYmQ1YWRlZGMzZWE3OWI2NSwKICAgICAgICAgICAgICAgIH0sCiAgICAgICAgICAgIH07CiAgICAgICAgICAgIGxldCBsYXllcl9jb250cm9sX2ZlNGE4MTc1MGU2MTdlMTEwNWEwODI0ZDE3YTJiMWM2ID0gTC5jb250cm9sLmxheWVycygKICAgICAgICAgICAgICAgIGxheWVyX2NvbnRyb2xfZmU0YTgxNzUwZTYxN2UxMTA1YTA4MjRkMTdhMmIxYzZfbGF5ZXJzLmJhc2VfbGF5ZXJzLAogICAgICAgICAgICAgICAgbGF5ZXJfY29udHJvbF9mZTRhODE3NTBlNjE3ZTExMDVhMDgyNGQxN2EyYjFjNl9sYXllcnMub3ZlcmxheXMsCiAgICAgICAgICAgICAgICB7CiAgInBvc2l0aW9uIjogInRvcHJpZ2h0IiwKICAiY29sbGFwc2VkIjogZmFsc2UsCiAgImF1dG9aSW5kZXgiOiB0cnVlLAp9CiAgICAgICAgICAgICkuYWRkVG8obWFwXzY1M2M2MDhlZTEzN2JiZjgyNWZmNWNhNWU2ZTVlMzhlKTsKCiAgICAgICAgCiAgICAKICAgICAgICAgICAgTC5jb250cm9sLmZ1bGxzY3JlZW4oCiAgICAgICAgICAgICAgICB7CiAgInBvc2l0aW9uIjogInRvcGxlZnQiLAogICJ0aXRsZSI6ICJFeHBhbmQgTWFwIiwKICAidGl0bGVDYW5jZWwiOiAiRXhpdCIsCiAgImZvcmNlU2VwYXJhdGVCdXR0b24iOiBmYWxzZSwKfQogICAgICAgICAgICApLmFkZFRvKG1hcF82NTNjNjA4ZWUxMzdiYmY4MjVmZjVjYTVlNmU1ZTM4ZSk7CiAgICAgICAgCjwvc2NyaXB0Pgo8L2h0bWw+" width="100%" height="680px" style="border: none; display: block;"></iframe>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Amazon (AWS), Microsoft, Google, Meta, CyrusOne, Equinix. Combined land holdings in Loudoun exceed 2,500 acres.</div>
         </div>
-    </section>
-
-    <section class="details-section" id="regional-insights">
-        <div class="details-container">
-            <div class="details-sidebar">
-                <h2>Regional Infrastructure Realities</h2>
-            </div>
-            <div class="details-content">
-                <div class="region-block">
-                    <h3>United States: Transmission & vPPA Friction</h3>
-                    <p><strong>Northern Virginia (PJM Grid)</strong> remains the largest consolidated data center hub globally. However, massive multi-gigawatt development pipelines have triggered major distribution utility transmission warnings. To satisfy corporate sustainability metrics, operators are forcing heavy capital allocations into virtual Power Purchase Agreements (vPPAs) across separate regional solar and wind fields to balance localized baseline gas/coal generation dependencies.</p>
-                    <p>Conversely, western hubs like <strong>Phoenix, Arizona</strong> show exceptional structural alignment between daytime photovoltaic production and maximum cooling load cycles, though dry climates necessitate a technological shift toward closed-loop waterless liquid architectures.</p>
-                </div>
-                
-                <div class="region-block">
-                    <h3>China: The 'Eastern Data, Western Computing' Strategy</h3>
-                    <p>Under the national <strong>东数西算 (East-to-West Computing)</strong> directive, China is systematically mitigating the acute power and land supply bottlenecks of coastal gateways like Shanghai by moving large-scale data facilities to resource-rich western provinces.</p>
-                    <p>The <strong>Guizhou Hub</strong> leverages massive regional hydro-electric installations combined with subterranean/cave configurations that inherently depress operational Power Usage Effectiveness (PUE). Concurrently, the <strong>Inner Mongolia (Ulanqab)</strong> plateau offers exceptional baseline wind resource footprints alongside sub-zero winter air profiles, matching optimally with non-latency-critical massive AI training runs.</p>
-                </div>
-
-                <div class="region-block">
-                    <h3>India: Hyper-Scale Consolidation & Grid Transformation</h3>
-                    <p>India represents the fastest-growing digital infrastructure market in South Asia, anchoring heavily on coastal gateways. <strong>Mumbai / Navi Mumbai</strong> handles the vast majority of international subsea data pipeline paths, delivering peerless grid uptime records but requiring extensive commercial open-access cross-provincial sourcing strategies to bring in green power.</p>
-                    <p>In the southern tech hubs, <strong>Bengaluru (Karnataka)</strong> offers structural leadership—the state grid routinely derives over half of its total generation footprint from operational wind and solar assets, allowing hyper-scalers to meet Scope 2 decarbonization priorities naturally without auxiliary greenfield capital deployment.</p>
-                </div>
-            </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Target Range</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--accent)">1.10–1.15</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:90%"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Excellent</span>
+          </div>
         </div>
-    </section>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:35%;background:var(--green)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Low (Potomac watershed)</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <section class="architecture-blueprint" id="architecture">
-        <h2>Enterprise Spatial Intelligence Blueprint</h2>
-        <div class="blueprint-box">
-[Ingestion Layer] -> REST API / Open-Data Pipeline (US Infrastructure Data, China National Plan, India-WRIS/CEA Ports)
-        │
-        ▼
-[Spatial Processing Pipeline] -> GeoPandas Alignment + Coordinate Translation Matrices
-        │
-        ▼
-[Folium Map Core Engine] -> Multi-Layer Vector Scaling (Radius ∝ Megawatt Demand)
-        │                       ↳ Color Class Mapping (Green: Clean, Orange: Constrained, Red: Hydrocarbon Interventions)
-        ▼
-[Compilation Logic Engine] -> Base64 Data Stream Compactor -> Output: Self-Contained Web Architecture Asset (index.html)</div>
-    </section>
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Phoenix Metro</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Maricopa Co. / APS + SRP Grid</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">1,400</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Constraint</div>
+          <div class="insight-row-val">Stable desert distribution grid. WECC interconnect with favorable capacity margins. High solar alignment—load peaks during daylight hours when generation peaks. Transmission headroom exists in Palo Verde corridor.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Pathway</div>
+          <div class="insight-row-val">Solar irradiance among highest in North America (6.5 kWh/m²/day). Utility-scale solar PPA rates: ~$25–35/MWh. Agnosec/APS 2032 renewable portfolio at 65%. Battery storage co-location becoming standard.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Microsoft (Phoenix-Goodyear campus, 20-site expansion), Meta, Google, Switch, CyrusOne.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Target Range</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--amber)">1.25–1.35</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:60%;background:var(--amber)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Challenged by heat</span>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:95%;background:var(--red)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--red)">Extremely High</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <footer>
-        Enterprise Sustainability & Compute Infrastructure Intelligence Engine • Portfolio Career Framework
-    </footer>
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Dallas–Fort Worth</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Allen/Plano / ERCOT Grid</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">1,800</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Constraint</div>
+          <div class="insight-row-val">ERCOT is an island grid—no federal FERC oversight, enabling faster PPAs. But 2021 Winter Storm Uri exposed catastrophic single-point failure risk. New hardening rules exist but long-run reliability remains contested.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Pathway</div>
+          <div class="insight-row-val">Texas is the #1 wind state (38 GW installed). Negative pricing events create exceptional economics for flexible loads. Solar buildout accelerating in West Texas with new CREZ transmission lines.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Oracle, Nokia, T5, Stream, Flexential, Iron Mountain. State tax incentives (Chapter 313 successors) remain potent.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Target Range</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--accent)">1.12–1.20</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:80%"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Good</span>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:55%;background:var(--amber)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--amber)">Medium-High</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- China Panel -->
+  <div class="country-panel" id="panel-china">
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Guizhou Hub</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Guiyang / National Policy Anchor</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">1,200</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Context</div>
+          <div class="insight-row-val">Part of China's "东数西算" (East Data, West Computing) national strategy. Guizhou designated as one of 8 national data center clusters. Hydro-dominant grid (Wujiang River system) provides near-baseload clean power.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Profile</div>
+          <div class="insight-row-val">Hydroelectric dominance (78% of provincial generation mix). Year-round mild temperatures (annual average 15°C) enable natural cooling. Lowest carbon intensity grid in the analysis at ~82 gCO₂/kWh.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Alibaba Cloud (Guizhou Data Center Park), Tencent, Huawei Cloud, Apple iCloud China. State Grid designated backbone.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Achieved</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--accent)">1.08–1.12</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:96%"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Best-in-class</span>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Geopolitical Risk</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:80%;background:var(--red)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--red)">High for non-Chinese operators</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Inner Mongolia</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Ulanqab / Northern Grid Corridor</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">950</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Context</div>
+          <div class="insight-row-val">Direct connection to Northern China UHV power export corridor. Power price among China's lowest at ~¥0.25/kWh industrial rate. Winter free-cooling season: October through April (ambient -20°C to +5°C).</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Profile</div>
+          <div class="insight-row-val">Wind-dominant with some solar. Curtailment rates historically 15–20% (improving). Carbon intensity: ~420 gCO₂/kWh (still coal-heavy in winter). Green certificate market emerging.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Alibaba, Baidu, China Mobile, China Telecom. Government-subsidized land and power pricing through 2030.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Achieved</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--accent)">1.09–1.14</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:93%"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Excellent (free cooling)</span>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:85%;background:var(--red)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--red)">Very High (arid steppe)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Yangtze River Delta</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Shanghai / Eastern Grid</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">1,600</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Context</div>
+          <div class="insight-row-val">Ultra-high baseline industrial demand creates constant upward pressure on available capacity. Grid density is extreme; new large-load connections face 3–4 year queues in priority zones.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Profile</div>
+          <div class="insight-row-val">Low renewable fraction locally (30%). Relies on UHV west-to-east power transfer. High cost premium. Primary value: latency to Shanghai financial district and subsea cable connectivity.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">GDS Holdings, 21Vianet, China Telecom IDC, Equinix (via partnerships). Financial services latency requirement drives siting premium.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Carbon Intensity</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:75%;background:var(--amber)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--amber)">~550 gCO₂/kWh</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- India Panel -->
+  <div class="country-panel" id="panel-india">
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Mumbai / Navi Mumbai</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Maharashtra / MSEDCL Grid</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">2,200</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Context</div>
+          <div class="insight-row-val">Highest grid reliability in India by SAIDI/SAIFI metrics. Multiple submarine cable landings (FALCON, SMW-4, EIG, 2Africa). CIDCO-designated MIDC zones in Navi Mumbai purpose-built for data center density.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Pathway</div>
+          <div class="insight-row-val">Maharashtra's 35 GW renewable target by 2030. Wheeling from Rajasthan/Gujarat solar farms at ~₹0.5/unit wheeling charge. Open access regulations improving under CEA 2023 amendments. PPA range: ₹2.8–3.5/kWh solar.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">CtrlS, Yotta, NTT, Equinix, ST Telemedia GDC, Web Werks, Digital Realty. 850+ MW under construction in Navi Mumbai alone (2024–26).</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Target Range</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--amber)">1.45–1.65</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:35%;background:var(--amber)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Cooling-challenged climate</span>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:50%;background:var(--amber)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--amber)">Medium (monsoon-dependent)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Bengaluru</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Karnataka / BESCOM Grid</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">850</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Context</div>
+          <div class="insight-row-val">Stable technology park distribution via BESCOM. Karnataka's progressive wheeling and open-access laws (Electricity Regulatory Commission orders 2022-23) have made renewable procurement significantly more feasible than rest of India.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Pathway</div>
+          <div class="insight-row-val">Altitude (920m elevation) enables adiabatic cooling with minimal energy overhead. Karnataka wind-solar hybrid zones in Chitradurga/Davangere accessible via open access. Effective renewable procurement cost: ₹4.2–5.1/kWh all-in.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Google (Hyderabad/Bengaluru hybrid), Microsoft, IBM, CTRL-S, Netmagic, AWS (edge nodes). Talent proximity premium for AI/ML workloads is a key differentiator.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">PUE Achieved</div>
+          <div class="mini-bar-row">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--accent)">1.40–1.55</span>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:50%"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Better than Mumbai</span>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:70%;background:var(--amber)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--amber)">Medium-High (Cauvery basin tension)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-block">
+      <div class="insight-header">
+        <div>
+          <div class="insight-location">Rajasthan Solar Zone</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px">Jaisalmer / RVPN Grid</div>
+        </div>
+        <div style="text-align:right">
+          <div class="insight-mw">600</div>
+          <div class="insight-mw-label">MW PROPOSED</div>
+        </div>
+      </div>
+      <div class="insight-rows">
+        <div class="insight-row">
+          <div class="insight-row-label">Grid Context</div>
+          <div class="insight-row-val">Emerging edge: RVPN grid expanding rapidly to absorb 30+ GW in committed renewable projects. Transmission infrastructure is the primary constraint—new 765kV lines scheduled for commissioning through 2027.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Renewable Profile</div>
+          <div class="insight-row-val">India's highest solar irradiance zone (6.8–7.0 kWh/m²/day). Wind resource also excellent in Jaisalmer corridor. First-mover advantage for hyperscale campuses co-located with generation assets. PPA potential: ₹1.8–2.4/kWh.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Key Operators</div>
+          <div class="insight-row-val">Greenfield—no hyperscale operator has commissioned here yet. Adani Green and ReNew Power hold land positions adjacent to potential data center zones.</div>
+        </div>
+        <div class="insight-row">
+          <div class="insight-row-label">Water Stress Index</div>
+          <div class="mini-bar-row">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:92%;background:var(--red)"></div></div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--red)">Extremely High — air-cooling mandatory</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ANALYTICS -->
+<section id="analytics">
+  <div class="section-label">Data Analytics Layer</div>
+  <h2 class="section-title">Visualizing the Constraint Landscape</h2>
+  <p class="section-body">Four lenses that practitioners need: power cost versus renewable access, carbon intensity versus proposed scale, PUE performance versus climate zone, and the regional capacity pipeline breakdown.</p>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Renewable Access Score vs Power Cost</div>
+      <div class="chart-subtitle">Identifying sites where clean energy and economics align</div>
+      <div class="chart-wrap"><canvas id="chart1"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Proposed MW Capacity by Region</div>
+      <div class="chart-subtitle">US leads pipeline volume; China leads per-cluster density</div>
+      <div class="chart-wrap"><canvas id="chart2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Carbon Intensity vs Scale (gCO₂/kWh)</div>
+      <div class="chart-subtitle">The sustainability gap between nameplate and reality</div>
+      <div class="chart-wrap"><canvas id="chart3"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Composite Site Score Ranking</div>
+      <div class="chart-subtitle">Multi-dimensional siting score (0–100)</div>
+      <div class="chart-wrap"><canvas id="chart4"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-label">Infrastructure Architecture Principles</div>
+  <h2 class="section-title">What "Renewable-Ready" Actually Requires</h2>
+  <p class="section-body">Moving from renewable energy commitment to operational 24/7 carbon-free infrastructure requires architectural choices at six layers—most of which are irreversible once site construction begins.</p>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-number">01</div>
+      <div class="arch-title">Grid Interconnect Architecture</div>
+      <div class="arch-body">The physical point of connection to the utility determines your entire renewable flexibility envelope. Dual-substation designs with separate feeder paths add 15–20% capex but halve outage risk. For sites exceeding 200 MW, private substation ownership is non-negotiable.</div>
+      <div class="arch-tags">
+        <span class="arch-tag">132/220kV Dual Feed</span>
+        <span class="arch-tag">Grid Forming Inverters</span>
+        <span class="arch-tag">BESS Buffer</span>
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-number">02</div>
+      <div class="arch-title">Cooling System Architecture</div>
+      <div class="arch-body">ASHRAE A2 (35°C intake) is the floor. AI/GPU workloads running at 60–100kW per rack demand direct liquid cooling (DLC) as the baseline—not air cooling with DLC supplement. Water-side economizer design must account for wet bulb temperature exceedance hours over 30-year site life.</div>
+      <div class="arch-tags">
+        <span class="arch-tag">Direct Liquid Cooling</span>
+        <span class="arch-tag">Rear-Door Heat Exchangers</span>
+        <span class="arch-tag">Adiabatic Pre-Cooling</span>
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-number">03</div>
+      <div class="arch-title">Energy Storage & Buffering</div>
+      <div class="arch-body">Renewable intermittency at hyperscale requires 4–8 hours of behind-the-meter battery storage to achieve smooth load profiles. Lithium iron phosphate (LFP) chemistry at this scale now pencils in at $180–220/kWh installed, dropping 12% annually. Flow batteries emerging for longer-duration buffering.</div>
+      <div class="arch-tags">
+        <span class="arch-tag">LFP BESS</span>
+        <span class="arch-tag">Vanadium Flow</span>
+        <span class="arch-tag">Demand Flexibility</span>
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-number">04</div>
+      <div class="arch-title">Power Delivery & Conversion</div>
+      <div class="arch-body">Modern hyperscale power chains: utility → HV switchgear → medium-voltage distribution → UPS → server PSU → VRM. Every conversion step loses 2–4%. Moving to 48V DC distribution at rack level, eliminating one conversion stage, can recover 150–300 kW per MW of IT load.</div>
+      <div class="arch-tags">
+        <span class="arch-tag">48V DC Distribution</span>
+        <span class="arch-tag">Li-Ion UPS</span>
+        <span class="arch-tag">N+1 Generator Topology</span>
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-number">05</div>
+      <div class="arch-title">24/7 CFE Procurement Structure</div>
+      <div class="arch-body">Annual renewable energy certificates (RECs) are the legacy instrument. Hourly Power Purchase Agreements (H-PPAs) are the emerging standard—matching consumption to generation on an hourly basis. This requires sophisticated load-shifting capability and energy management systems that most operator-class facilities don't yet have.</div>
+      <div class="arch-tags">
+        <span class="arch-tag">Hourly PPA</span>
+        <span class="arch-tag">Virtual PPA</span>
+        <span class="arch-tag">Additionality Matching</span>
+      </div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-number">06</div>
+      <div class="arch-title">Operational Intelligence Layer</div>
+      <div class="arch-body">Carbon-aware computing—shifting workloads to hours and locations where the grid is cleanest—can reduce effective carbon intensity by 20–40% without hardware changes. Requires real-time grid carbon intensity signals, flexible orchestration middleware, and workload classification systems to identify deferrable versus latency-sensitive jobs.</div>
+      <div class="arch-tags">
+        <span class="arch-tag">Carbon-Aware Scheduling</span>
+        <span class="arch-tag">Real-Time Grid Signals</span>
+        <span class="arch-tag">Workload Orchestration</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- RISK REGISTER -->
+<section id="risks">
+  <div class="section-label">Structural Risk Register</div>
+  <h2 class="section-title">The Risks Operators Don't Publish</h2>
+  <p class="section-body">Beyond site selection scores, these are the systemic risks that will reshape the landscape over the next decade—drawn from infrastructure deployment experience across Shell, Maersk, and energy sector operations.</p>
+  <div class="risk-grid">
+    <div class="risk-card high">
+      <div class="risk-label">HIGH PROBABILITY · HIGH IMPACT</div>
+      <div class="risk-title">Interconnect Queue Collapse</div>
+      <div class="risk-body">The US interconnect study process is structurally broken. FERC Order 2023 reforms will improve throughput, but the existing 1,000+ GW backlog means greenfield sites committing power today face realistic 6–9 year wait times. Operators anchoring 2027 buildout timelines to new interconnects are carrying undisclosed schedule risk.</div>
+    </div>
+    <div class="risk-card high">
+      <div class="risk-label">HIGH PROBABILITY · HIGH IMPACT</div>
+      <div class="risk-title">Water Regulation Acceleration</div>
+      <div class="risk-body">Arizona, California, and Maharashtra are all moving toward mandated water efficiency standards for large industrial consumers. A 500 MW air-cooled campus in Phoenix consumes approximately 1.5 billion gallons annually. Facilities designed today to current standards face forced retrofits within a 5-year window as regulation catches up to climate science.</div>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-label">MEDIUM PROBABILITY · HIGH IMPACT</div>
+      <div class="risk-title">India Open Access Regulatory Reversal</div>
+      <div class="risk-body">State electricity boards in India have a documented history of restricting open access wheeling when it threatens distribution company revenue. Maharashtra, Telangana, and Karnataka have all imposed temporary restrictions within the last 5 years. PPAs signed today carry material volume risk if regulatory access is curtailed.</div>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-label">MEDIUM PROBABILITY · MEDIUM IMPACT</div>
+      <div class="risk-title">China Data Localization Escalation</div>
+      <div class="risk-body">The 2021 Data Security Law and Personal Information Protection Law created a new compliance layer. MLPS 2.0 and CAC oversight rules are tightening. Non-Chinese operators face an increasing compliance cost burden that erodes the economic advantage of Guizhou's energy and PUE economics.</div>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-label">MEDIUM PROBABILITY · HIGH IMPACT</div>
+      <div class="risk-title">Grid Carbon Intensity Disclosure Mandates</div>
+      <div class="risk-body">SEC climate disclosure rules (Rule S-K) and EU CSRD both mandate Scope 2 location-based and market-based reporting. Sites in coal-heavy grids (Inner Mongolia, Yangtze Delta) will carry a disclosure liability that currently isn't priced into land and power cost comparisons.</div>
+    </div>
+    <div class="risk-card low">
+      <div class="risk-label">LOW PROBABILITY · HIGH IMPACT</div>
+      <div class="risk-title">Hydrogen Economy Disruption</div>
+      <div class="risk-body">If green hydrogen achieves $2/kg at scale (currently $5–8/kg), the entire cooling and backup power architecture for data centers shifts. Fuel cell-based backup eliminates diesel generator requirements and transforms the stranded asset risk profile of sites currently dependent on fossil backup for N+1 redundancy.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- PRACTITIONER NOTE -->
+<section id="practitioner" style="padding:100px 80px">
+  <div class="pnote">
+    <div class="pnote-eyebrow">Practitioner's Synthesis</div>
+    <div class="pnote-text">
+      "The hyperscale energy conversation is dominated by press releases and policy announcements. The actual constraint is always in the last 10 meters—the transformer, the cooling tower, the interconnect agreement."
+    </div>
+    <div class="pnote-body">
+      After 25 years operating digital and data infrastructure across Shell, Maersk, and TotalEnergies—including sites in geographically and regulatorily complex environments across Africa, Asia, and Europe—the pattern is consistent: the macro energy availability story and the site-level delivery reality diverge significantly.
+      <br/><br/>
+      Guizhou's hydro story is genuinely compelling, but the data sovereignty constraints make it operationally inaccessible to most Western operators. Northern Virginia's operator density is a competitive moat, but also a grid saturation trap. India's solar economics are extraordinary, but the wheeling regulatory environment requires active management, not passive assumption.
+      <br/><br/>
+      The most underappreciated opportunity in this analysis is the Rajasthan Solar Zone—first-mover economics for an operator willing to own their generation assets and accept 2027–2028 infrastructure maturity. The sites that win the next decade are those where the operator is willing to function as a quasi-utility, not just a power consumer.
+    </div>
+    <div class="pnote-sig">
+      Prakash Krishnamachari &nbsp;·&nbsp; Digital, Data & Innovation Manager, TotalEnergies E&P Uganda &nbsp;·&nbsp; Transitioning to Fractional Chief AI Officer
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">EcoGrid AI v2.0</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:6px">Hyper-Scale Data Center Grid & Sustainability Intelligence</div>
+  </div>
+  <div class="footer-meta">
+    <div>Built by <a href="https://github.com/prakashkrish-DataGeek" target="_blank">prakashkrish-DataGeek</a></div>
+    <div>Data compiled May 2026 from FERC, CEA, GridWatch, IEA, and operator disclosures</div>
+    <div style="margin-top:6px;color:var(--text3)">Analysis reflects practitioner synthesis — not investment advice</div>
+  </div>
+</footer>
+
+<script>
+// ===== DATA =====
+const SITES = [
+  {
+    id: 'nova', name: 'Northern Virginia', country: 'US', region: 'us',
+    lat: 39.0438, lng: -77.4875, mw: 3200,
+    renewable: 62, stability: 45, water: 80, policy: 78, cost: 52, infra: 95,
+    pue: '1.10–1.15', carbonIntensity: 210, powerCost: 55,
+    renewableAccess: 'Moderate', verdict: 'established',
+    constraints: 'Severe PJM transmission congestion; 5–7yr interconnect queue',
+    sustainability: 'Winter air-side economization; advanced chillers',
+    operators: 'AWS, Microsoft, Google, Meta, Equinix'
+  },
+  {
+    id: 'phx', name: 'Phoenix Metro', country: 'US', region: 'us',
+    lat: 33.4484, lng: -112.074, mw: 1400,
+    renewable: 82, stability: 78, water: 10, policy: 72, cost: 72, infra: 70,
+    pue: '1.25–1.35', carbonIntensity: 310, powerCost: 35,
+    renewableAccess: 'High', verdict: 'conditional',
+    constraints: 'Stable grid; extreme water stress is long-run dealbreaker',
+    sustainability: 'Closed-loop liquid cooling; solar co-location',
+    operators: 'Microsoft, Meta, Google, Switch'
+  },
+  {
+    id: 'dfw', name: 'Dallas–Fort Worth', country: 'US', region: 'us',
+    lat: 32.7767, lng: -96.797, mw: 1800,
+    renewable: 78, stability: 65, water: 45, policy: 80, cost: 75, infra: 72,
+    pue: '1.12–1.20', carbonIntensity: 360, powerCost: 38,
+    renewableAccess: 'High', verdict: 'recommended',
+    constraints: 'ERCOT island grid; Uri-event resilience risk',
+    sustainability: 'Direct-to-chip warm water cooling',
+    operators: 'Oracle, Nokia, T5, Stream, Iron Mountain'
+  },
+  {
+    id: 'guizhou', name: 'Guizhou Hub', country: 'China', region: 'china',
+    lat: 26.5833, lng: 106.7167, mw: 1200,
+    renewable: 96, stability: 88, water: 82, policy: 35, cost: 90, infra: 78,
+    pue: '1.08–1.12', carbonIntensity: 82, powerCost: 42,
+    renewableAccess: 'Very High', verdict: 'conditional',
+    constraints: 'National data sovereignty constraints for non-Chinese operators',
+    sustainability: 'Natural cave-cooling; hydro-baseload 24/7 CFE',
+    operators: 'Alibaba, Tencent, Huawei Cloud, Apple iCloud China'
+  },
+  {
+    id: 'imongo', name: 'Inner Mongolia', country: 'China', region: 'china',
+    lat: 41.0312, lng: 113.1141, mw: 950,
+    renewable: 64, stability: 75, water: 15, policy: 40, cost: 95, infra: 60,
+    pue: '1.09–1.14', carbonIntensity: 420, powerCost: 28,
+    renewableAccess: 'High', verdict: 'conditional',
+    constraints: 'Coal-heavy winter grid; extreme water scarcity',
+    sustainability: 'Winter free-cooling; sub-1.15 PUE design',
+    operators: 'Alibaba, Baidu, China Mobile, China Telecom'
+  },
+  {
+    id: 'yzr', name: 'Yangtze River Delta', country: 'China', region: 'china',
+    lat: 31.2304, lng: 121.4737, mw: 1600,
+    renewable: 30, stability: 55, water: 58, policy: 38, cost: 42, infra: 85,
+    pue: '1.30–1.45', carbonIntensity: 550, powerCost: 68,
+    renewableAccess: 'Low', verdict: 'latency-only',
+    constraints: 'Ultra-high demand density; 3–4yr queue for new capacity',
+    sustainability: 'AI-optimized chilling; river heat exchangers',
+    operators: 'GDS, 21Vianet, Equinix (partnerships)'
+  },
+  {
+    id: 'mumbai', name: 'Mumbai / Navi Mumbai', country: 'India', region: 'india',
+    lat: 19.033, lng: 73.0297, mw: 2200,
+    renewable: 55, stability: 82, water: 52, policy: 65, cost: 60, infra: 88,
+    pue: '1.45–1.65', carbonIntensity: 680, powerCost: 62,
+    renewableAccess: 'Moderate', verdict: 'recommended',
+    constraints: 'High PUE due to climate; wheeling cost adds to renewable economics',
+    sustainability: 'Industrial centrifugal chillers; sea-breeze pre-cooling',
+    operators: 'CtrlS, Yotta, NTT, Equinix, ST Telemedia'
+  },
+  {
+    id: 'blr', name: 'Bengaluru', country: 'India', region: 'india',
+    lat: 12.9716, lng: 77.5946, mw: 850,
+    renewable: 70, stability: 75, water: 40, policy: 72, cost: 68, infra: 70,
+    pue: '1.40–1.55', carbonIntensity: 610, powerCost: 55,
+    renewableAccess: 'High', verdict: 'recommended',
+    constraints: 'Cauvery water tension; power supply during peak industrial demand',
+    sustainability: 'Altitude adiabatic cooling; Karnataka open access',
+    operators: 'Google, Microsoft, IBM, Netmagic, AWS edge'
+  },
+  {
+    id: 'rajasthan', name: 'Rajasthan Solar Zone', country: 'India', region: 'india',
+    lat: 26.9124, lng: 70.9120, mw: 600,
+    renewable: 95, stability: 52, water: 5, policy: 60, cost: 88, infra: 35,
+    pue: '1.55–1.80', carbonIntensity: 190, powerCost: 22,
+    renewableAccess: 'Very High', verdict: 'frontier',
+    constraints: 'Greenfield; transmission to 2027; mandatory air-cooling (water)',
+    sustainability: 'Co-located solar generation; lowest PPA rate in analysis',
+    operators: 'Greenfield — no hyperscale commissioned yet'
+  }
+];
+
+// ===== COMPOSITE SCORE =====
+function compositeScore(s) {
+  return Math.round((s.renewable + s.stability + s.water + s.policy + s.cost + s.infra) / 6);
+}
+
+// ===== COLOR SYSTEM =====
+function renewableColor(score) {
+  if (score >= 85) return '#00C877';
+  if (score >= 65) return '#7DC77A';
+  if (score >= 45) return '#F5A623';
+  return '#FF4D4D';
+}
+
+function verdictBadge(v) {
+  const map = {
+    'recommended': ['badge-green', 'Recommended'],
+    'conditional': ['badge-amber', 'Conditional'],
+    'established': ['badge-green', 'Established'],
+    'latency-only': ['badge-red', 'Latency Play'],
+    'frontier': ['badge-amber', 'Frontier'],
+  };
+  return map[v] || ['badge-amber', v];
+}
+
+// ===== MAP =====
+let map, allLayers = [], regionGroups = {};
+
+function initMap() {
+  map = L.map('map', {
+    center: [30, 95],
+    zoom: 3,
+    preferCanvas: true,
+    zoomControl: true,
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 18
+  }).addTo(map);
+
+  SITES.forEach(site => {
+    const radius = Math.sqrt(site.mw) * 0.8;
+    const color = renewableColor(site.renewable);
+
+    const circle = L.circleMarker([site.lat, site.lng], {
+      radius,
+      color: color,
+      fillColor: color,
+      fillOpacity: 0.5,
+      weight: 1.5,
+      opacity: 0.9
+    });
+
+    const score = compositeScore(site);
+    const [badgeClass, badgeText] = verdictBadge(site.verdict);
+
+    circle.bindPopup(`
+      <div class="popup-inner">
+        <div class="popup-location">${site.name}</div>
+        <div class="popup-country">${site.country} &nbsp;·&nbsp; ${site.renewableAccess} Renewable Access</div>
+        <div class="popup-stats">
+          <div>
+            <div class="popup-stat-label">Proposed Capacity</div>
+            <div class="popup-stat-val">${site.mw.toLocaleString()} MW</div>
+          </div>
+          <div>
+            <div class="popup-stat-label">Composite Score</div>
+            <div class="popup-stat-val" style="color:${color}">${score}/100</div>
+          </div>
+          <div>
+            <div class="popup-stat-label">Carbon Intensity</div>
+            <div class="popup-stat-val">${site.carbonIntensity} gCO₂/kWh</div>
+          </div>
+          <div>
+            <div class="popup-stat-label">Power Cost (USD/MWh)</div>
+            <div class="popup-stat-val">$${site.powerCost}</div>
+          </div>
+        </div>
+        <hr class="popup-divider"/>
+        <div class="popup-row-label">PUE Target</div>
+        <div class="popup-row-val">${site.pue}</div>
+        <div class="popup-row-label">Grid Constraint</div>
+        <div class="popup-row-val">${site.constraints}</div>
+        <div class="popup-row-label">Key Operators</div>
+        <div class="popup-row-val">${site.operators}</div>
+        <div class="popup-row-label">Sustainability Architecture</div>
+        <div class="popup-row-val">${site.sustainability}</div>
+      </div>
+    `, { maxWidth: 340 });
+
+    circle.addTo(map);
+    allLayers.push({ layer: circle, region: site.region });
+
+    if (!regionGroups[site.region]) regionGroups[site.region] = [];
+    regionGroups[site.region].push(circle);
+  });
+}
+
+function filterMap(region) {
+  document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  allLayers.forEach(({ layer }) => map.removeLayer(layer));
+
+  if (region === 'all') {
+    allLayers.forEach(({ layer }) => layer.addTo(map));
+    map.setView([30, 95], 3);
+  } else {
+    allLayers.filter(l => l.region === region).forEach(({ layer }) => layer.addTo(map));
+    const centers = { us: [[38, -95], 4], china: [[35, 110], 4], india: [[22, 79], 5] };
+    const [center, zoom] = centers[region];
+    map.setView(center, zoom);
+  }
+}
+
+// ===== MATRIX TABLE =====
+function buildMatrix() {
+  const sorted = [...SITES].sort((a, b) => compositeScore(b) - compositeScore(a));
+  const tbody = document.getElementById('matrixBody');
+
+  sorted.forEach(site => {
+    const score = compositeScore(site);
+    const color = renewableColor(site.renewable);
+    const [badgeClass, badgeText] = verdictBadge(site.verdict);
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>
+        <div class="site-name">${site.name}</div>
+        <div class="site-country">${site.country}</div>
+      </td>
+      <td style="font-family:var(--mono);font-size:13px">${site.mw.toLocaleString()}</td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${site.renewable}%;background:${renewableColor(site.renewable)}"></div></div>
+          <span class="score-val" style="color:${renewableColor(site.renewable)}">${site.renewable}</span>
+        </div>
+      </td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${site.stability}%;background:${site.stability >= 70 ? '#00C877' : site.stability >= 50 ? '#F5A623' : '#FF4D4D'}"></div></div>
+          <span class="score-val">${site.stability}</span>
+        </div>
+      </td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${site.water}%;background:${site.water >= 65 ? '#00C877' : site.water >= 40 ? '#F5A623' : '#FF4D4D'}"></div></div>
+          <span class="score-val">${site.water}</span>
+        </div>
+      </td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${site.policy}%;background:${site.policy >= 65 ? '#00C877' : '#F5A623'}"></div></div>
+          <span class="score-val">${site.policy}</span>
+        </div>
+      </td>
+      <td>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${site.cost}%;background:#3B9EFF"></div></div>
+          <span class="score-val">${site.cost}</span>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-family:var(--display);font-size:18px;font-weight:800;color:${color}">${score}</div>
+          <div class="score-bar" style="max-width:60px;flex-grow:0;width:60px"><div class="score-fill" style="width:${score}%;background:${color}"></div></div>
+        </div>
+      </td>
+      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ===== TABS =====
+function switchTab(country) {
+  document.querySelectorAll('.country-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.country-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(`panel-${country}`).classList.add('active');
+}
+
+// ===== CHARTS =====
+const CHART_DEFAULTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      labels: {
+        color: '#8EA4B2',
+        font: { family: 'DM Mono', size: 10 },
+        boxWidth: 10
+      }
+    },
+    tooltip: {
+      backgroundColor: '#111D27',
+      borderColor: 'rgba(0,200,119,0.2)',
+      borderWidth: 1,
+      titleColor: '#E8EEF2',
+      bodyColor: '#8EA4B2',
+      titleFont: { family: 'Syne', size: 12 },
+      bodyFont: { family: 'DM Mono', size: 11 }
+    }
+  },
+  scales: {
+    x: {
+      ticks: { color: '#4A6270', font: { family: 'DM Mono', size: 10 } },
+      grid: { color: 'rgba(255,255,255,0.04)' }
+    },
+    y: {
+      ticks: { color: '#4A6270', font: { family: 'DM Mono', size: 10 } },
+      grid: { color: 'rgba(255,255,255,0.04)' }
+    }
+  }
+};
+
+function initCharts() {
+  // Chart 1: Renewable Score vs Power Cost scatter
+  new Chart(document.getElementById('chart1'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'US Sites',
+          data: SITES.filter(s => s.region === 'us').map(s => ({ x: s.powerCost, y: s.renewable, label: s.name })),
+          backgroundColor: '#3B9EFF88',
+          borderColor: '#3B9EFF',
+          pointRadius: 8
+        },
+        {
+          label: 'China Sites',
+          data: SITES.filter(s => s.region === 'china').map(s => ({ x: s.powerCost, y: s.renewable, label: s.name })),
+          backgroundColor: '#F5A62388',
+          borderColor: '#F5A623',
+          pointRadius: 8
+        },
+        {
+          label: 'India Sites',
+          data: SITES.filter(s => s.region === 'india').map(s => ({ x: s.powerCost, y: s.renewable, label: s.name })),
+          backgroundColor: '#00C87788',
+          borderColor: '#00C877',
+          pointRadius: 8
+        }
+      ]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      plugins: {
+        ...CHART_DEFAULTS.plugins,
+        tooltip: {
+          ...CHART_DEFAULTS.plugins.tooltip,
+          callbacks: {
+            label: ctx => `${ctx.raw.label}: Renewable ${ctx.raw.y}% | $${ctx.raw.x}/MWh`
+          }
+        }
+      },
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x, title: { display: true, text: 'Power Cost (USD/MWh)', color: '#4A6270', font: { size: 10 } } },
+        y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: 'Renewable Access Score', color: '#4A6270', font: { size: 10 } }, min: 0, max: 100 }
+      }
+    }
+  });
+
+  // Chart 2: MW by region
+  const byRegion = ['us', 'china', 'india'].map(r => SITES.filter(s => s.region === r).reduce((a, s) => a + s.mw, 0));
+  new Chart(document.getElementById('chart2'), {
+    type: 'bar',
+    data: {
+      labels: ['United States', 'China', 'India'],
+      datasets: [{
+        label: 'Proposed MW',
+        data: byRegion,
+        backgroundColor: ['#3B9EFF55', '#F5A62355', '#00C87755'],
+        borderColor: ['#3B9EFF', '#F5A623', '#00C877'],
+        borderWidth: 1,
+        borderRadius: 2
+      }]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      plugins: { ...CHART_DEFAULTS.plugins, legend: { display: false } },
+      scales: {
+        ...CHART_DEFAULTS.scales,
+        y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: 'Total Proposed MW', color: '#4A6270', font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Chart 3: Carbon intensity vs proposed MW
+  new Chart(document.getElementById('chart3'), {
+    type: 'bubble',
+    data: {
+      datasets: [
+        {
+          label: 'US', data: SITES.filter(s => s.region === 'us').map(s => ({
+            x: s.carbonIntensity, y: s.mw / 100, r: Math.sqrt(s.mw) * 0.5, label: s.name
+          })),
+          backgroundColor: '#3B9EFF44', borderColor: '#3B9EFF'
+        },
+        {
+          label: 'China', data: SITES.filter(s => s.region === 'china').map(s => ({
+            x: s.carbonIntensity, y: s.mw / 100, r: Math.sqrt(s.mw) * 0.5, label: s.name
+          })),
+          backgroundColor: '#F5A62344', borderColor: '#F5A623'
+        },
+        {
+          label: 'India', data: SITES.filter(s => s.region === 'india').map(s => ({
+            x: s.carbonIntensity, y: s.mw / 100, r: Math.sqrt(s.mw) * 0.5, label: s.name
+          })),
+          backgroundColor: '#00C87744', borderColor: '#00C877'
+        }
+      ]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      plugins: {
+        ...CHART_DEFAULTS.plugins,
+        tooltip: {
+          ...CHART_DEFAULTS.plugins.tooltip,
+          callbacks: { label: ctx => `${ctx.raw.label}: ${ctx.raw.x} gCO₂/kWh | ${(ctx.raw.y * 100).toFixed(0)} MW` }
+        }
+      },
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x, title: { display: true, text: 'Carbon Intensity (gCO₂/kWh)', color: '#4A6270', font: { size: 10 } } },
+        y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: 'Proposed Capacity (×100 MW)', color: '#4A6270', font: { size: 10 } } }
+      }
+    }
+  });
+
+  // Chart 4: Composite score ranking bar
+  const ranked = [...SITES].sort((a, b) => compositeScore(b) - compositeScore(a));
+  new Chart(document.getElementById('chart4'), {
+    type: 'bar',
+    data: {
+      labels: ranked.map(s => s.name.split(' ')[0]),
+      datasets: [{
+        label: 'Composite Score',
+        data: ranked.map(compositeScore),
+        backgroundColor: ranked.map(s => renewableColor(s.renewable) + '88'),
+        borderColor: ranked.map(s => renewableColor(s.renewable)),
+        borderWidth: 1,
+        borderRadius: 2
+      }]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      indexAxis: 'y',
+      plugins: { ...CHART_DEFAULTS.plugins, legend: { display: false } },
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x, min: 0, max: 100, title: { display: true, text: 'Composite Score /100', color: '#4A6270', font: { size: 10 } } },
+        y: { ...CHART_DEFAULTS.scales.y }
+      }
+    }
+  });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  initMap();
+  buildMatrix();
+  initCharts();
+});
+</script>
 </body>
 </html>
