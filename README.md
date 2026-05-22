@@ -9,7 +9,7 @@
 
 ## What This Is
 
-A practitioner-grade, single-file interactive intelligence platform analyzing **11 hyper-scale AI data center clusters** across the US, China, and India against a six-dimensional constraint matrix:
+A practitioner grade, single-file interactive intelligence platform analyzing **11 hyper-scale AI data center clusters** across the US, China, and India against a six-dimensional constraint matrix:
 
 | Dimension | What It Captures |
 |---|---|
