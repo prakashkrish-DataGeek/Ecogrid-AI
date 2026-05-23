@@ -878,8 +878,10 @@
     <li><a href="#insights">Regional Intel</a></li>
     <li><a href="#analytics">Analytics</a></li>
     <li><a href="#risks">Risk Register</a></li>
+    <li><a href="#tech-arch">Architecture</a></li>
+    <li><a href="#methodology">Methodology</a></li>
   </ul>
-  <div class="nav-tag">v2.0 // May 2026</div>
+  <div class="nav-tag">v2.1 // May 2026</div>
 </nav>
 
 <!-- HERO -->
@@ -933,26 +935,26 @@
     <div class="thesis-card">
       <div class="thesis-card-icon">⚡</div>
       <div class="thesis-card-title">Grid Inertia Is the Hidden Constraint</div>
-      <div class="thesis-card-body">Nameplate renewable capacity means nothing at the substation. The PJM interconnect queue in Virginia alone exceeds 300 GW of requests against a realistic 20 GW absorption capacity over the next decade. Operators building there are essentially financing grid upgrades for the entire region.</div>
-      <div class="thesis-card-stat">Interconnect queue-to-absorption ratio: <strong>&gt;15:1</strong> in PJM / <strong>~3:1</strong> in ERCOT</div>
+      <div class="thesis-card-body">Nameplate renewable capacity means nothing at the substation. The PJM interconnect queue in the mid-Atlantic region has grown to well over an order of magnitude beyond realistic near-term absorption capacity. Operators building there are essentially financing grid upgrades for the entire region.</div>
+      <div class="thesis-card-stat">Queue-to-absorption ratio: <strong>analyst estimate — well over 10:1</strong> in PJM (see FERC Order 2023 backlog data) / <strong>~3:1 estimated</strong> in ERCOT <span style="color:var(--text3);font-size:10px">· Practitioner estimate</span></div>
     </div>
     <div class="thesis-card">
       <div class="thesis-card-icon">💧</div>
       <div class="thesis-card-title">Water Is the Silent Dealbreaker</div>
-      <div class="thesis-card-body">A 100 MW data center using evaporative cooling consumes ~500,000 gallons of water per day. Phoenix and Inner Mongolia both offer cheap power, but face severe long-run water stress that will trigger regulatory intervention within a 10-year asset depreciation horizon.</div>
-      <div class="thesis-card-stat">Phoenix water stress index: <strong>Extremely High (5/5)</strong> &nbsp;|&nbsp; Navi Mumbai coastal availability: <strong>Moderate (3/5)</strong></div>
+      <div class="thesis-card-body">A 100 MW data center using evaporative cooling consumes approximately 500,000 gallons of water per day (Lawrence Berkeley National Lab, 2023 estimate). Phoenix and Inner Mongolia both offer cheap power, but face severe long-run water stress that will likely trigger regulatory intervention within a 10-year asset depreciation horizon.</div>
+      <div class="thesis-card-stat">Water stress tier (WRI Aqueduct 4.0): Phoenix <strong>Extremely High</strong> &nbsp;|&nbsp; Navi Mumbai <strong>Medium–High</strong> <span style="color:var(--text3);font-size:10px">· Source: WRI</span></div>
     </div>
     <div class="thesis-card">
       <div class="thesis-card-icon">🌿</div>
       <div class="thesis-card-title">Renewable % Is a Marketing Number</div>
       <div class="thesis-card-body">24/7 carbon-free energy (CFE) matching is the actual sustainability benchmark—not annual renewable percentage claims. Only a handful of sites globally can credibly commit to hourly CFE matching at hyperscale. Guizhou's hydro profile is the closest analog in emerging markets.</div>
-      <div class="thesis-card-stat">Hourly CFE capability: <strong>Guizhou 91%</strong> / <strong>Inner Mongolia 64%</strong> / <strong>Rajasthan 58%</strong></div>
+      <div class="thesis-card-stat">Modelled hourly CFE score (0–100): <strong>Guizhou ~90</strong> / <strong>Inner Mongolia ~60</strong> / <strong>Rajasthan ~55</strong> <span style="color:var(--text3);font-size:10px">· Modelled — see Methodology</span></div>
     </div>
     <div class="thesis-card">
       <div class="thesis-card-icon">🏛️</div>
       <div class="thesis-card-title">Policy Risk Has a Compounding Half-Life</div>
-      <div class="thesis-card-body">Data center permitting cycles in the US average 3–5 years. India's wheeling regulations change faster than most hyperscalers can lock in PPAs. China's data localization and cross-border data flow restrictions add a geopolitical premium to otherwise compelling energy economics.</div>
-      <div class="thesis-card-stat">Avg US permitting timeline: <strong>42 months</strong> &nbsp;|&nbsp; India PPA lock-in risk: <strong>High</strong></div>
+      <div class="thesis-card-body">Data center permitting cycles in the US average 3–5 years (Jones Lang LaSalle, 2024). India's wheeling regulations change faster than most hyperscalers can lock in PPAs. China's data localization and cross-border data flow restrictions add a geopolitical premium to otherwise compelling energy economics.</div>
+      <div class="thesis-card-stat">Avg US permitting timeline: <strong>~36–48 months</strong> (JLL estimate) &nbsp;|&nbsp; India PPA lock-in risk: <strong>High</strong> <span style="color:var(--text3);font-size:10px">· Practitioner estimate</span></div>
     </div>
   </div>
 </section>
@@ -986,26 +988,68 @@
 <section id="scoring">
   <div class="section-label">Multi-Dimensional Site Score</div>
   <h2 class="section-title">Comparative Siting Matrix</h2>
-  <p class="section-body">Scored across six dimensions: renewable access, grid stability, water stress (inverted), policy clarity, cost competitiveness, and infrastructure readiness. Weighted equally at 1/6 each for a composite out of 100.</p>
+  <p class="section-body">Scored across six dimensions, each weighted equally at 1/6 for a composite out of 100. All dimension scores are <strong>modelled indicators</strong> synthesized from the public datasets listed in the Methodology section — not direct utility measurements. See the Data Dictionary below for exact construction logic.</p>
 
   <div style="overflow-x:auto">
   <table class="matrix-table">
     <thead>
       <tr>
         <th>Site</th>
-        <th>Proposed MW</th>
-        <th>Renewable Access</th>
-        <th>Grid Stability</th>
-        <th>Water Risk</th>
-        <th>Policy Clarity</th>
-        <th>Cost Index</th>
-        <th>Composite Score</th>
+        <th>Proposed MW <sup style="color:var(--text3)">①</sup></th>
+        <th>Renewable Access <sup style="color:var(--text3)">②</sup></th>
+        <th>Grid Stability <sup style="color:var(--text3)">③</sup></th>
+        <th>Water Risk <sup style="color:var(--text3)">④</sup></th>
+        <th>Policy Clarity <sup style="color:var(--text3)">⑤</sup></th>
+        <th>Cost Index <sup style="color:var(--text3)">⑥</sup></th>
+        <th>Composite Score <sup style="color:var(--text3)">⑦</sup></th>
         <th>Verdict</th>
       </tr>
     </thead>
     <tbody id="matrixBody">
     </tbody>
   </table>
+  </div>
+
+  <!-- DATA DICTIONARY -->
+  <div style="margin-top:40px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:32px">
+    <div style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px">Data Dictionary — Score Construction</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--bg3)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">① Proposed MW</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Pipeline capacity drawn from operator announcements, national energy authority filings, and data center industry trackers (DCD, Structure Research). Reflects announced pipeline, not commissioned capacity.</div>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);background:var(--bg3)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">② Renewable Access Score (0–100) · Modelled</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Composite of: (a) grid renewable generation share (IEA 2024 national/provincial statistics), (b) availability of open-access or wheeling mechanisms (CEA, FERC, NEA), and (c) proximity to utility-scale renewable assets (GEE spatial layer). Equally weighted thirds.</div>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">③ Grid Stability Score (0–100) · Modelled</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Derived from: (a) SAIDI/SAIFI reliability indices where published (NERC, POSOCO, NEA), (b) interconnect queue depth relative to regional absorption capacity (FERC queue data), and (c) dual-substation or redundant feed availability. Qualitatively adjusted for market structure (ERCOT island risk, China state dispatch).</div>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">④ Water Risk Score (0–100) · Modelled — Higher = Lower Risk</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Inverted WRI Aqueduct 4.0 Baseline Water Stress score for the relevant watershed, scaled 0–100. Score of 100 = negligible stress; score of 0 = extremely high stress. Phoenix (~8) and Inner Mongolia (~12) score critically low; Northern Virginia (~78) and Guizhou (~80) score well.</div>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">⑤ Policy Clarity Score (0–100) · Modelled</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Practitioner scoring across: (a) permitting timeline predictability (JLL, Cushman & Wakefield DC market reports), (b) data sovereignty and cross-border data flow constraints (CAC, DPDP Act, CLOUD Act framework), (c) PPA/wheeling regulatory stability (CEA, FERC orders history), and (d) geopolitical risk for non-domestic operators.</div>
+      </div>
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">⑥ Cost Index (0–100) · Modelled</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">All-in power cost estimate (BloombergNEF PPA tracker, Lawrence Berkeley Lab LBNL-2001975, CERC/ERCOT tariff data) normalized to 0–100 scale. Score of 100 = lowest cost in dataset (Rajasthan ~₹1.8–2.4/kWh); score of 0 = highest cost. Does not include land, construction, or labour cost differentials.</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">⑦ Composite Score (0–100) · Modelled</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Simple unweighted average of scores ②–⑥ plus Infrastructure Readiness (operator density, substation availability, fibre maturity — drawn from Uptime Institute Global Survey 2024 and operator disclosures). All six dimensions weighted equally at 1/6. This is an analytical heuristic, not an optimisation model.</div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">Carbon Intensity (gCO₂/kWh) · Modelled</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">Annual average grid carbon intensity from electricityMaps (where available) and IEA Electricity Information 2024, at the provincial/state level. Reflects location-based Scope 2 intensity. Not hourly-matched; actual operational CFE scores will differ. Displayed in map popups only.</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:var(--text3);font-style:italic;line-height:1.7">
+      All scores represent the author's analytical synthesis as of May 2026. They are directional indicators for comparative site evaluation and should not be used as the sole basis for investment, planning, or procurement decisions. Underlying data sources are cited in the References & Methodology section.
+    </div>
   </div>
 </section>
 
@@ -1555,16 +1599,167 @@
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- TECHNICAL ARCHITECTURE -->
+<section id="tech-arch" style="background:var(--bg2)">
+  <div class="section-label">Technical Architecture</div>
+  <h2 class="section-title">From GEE Pipeline to Insight</h2>
+  <p class="section-body">This platform was seeded by a Python spatial intelligence engine (generate_dashboard.py) built on Google Earth Engine (GEE) data primitives and Folium map rendering. The v2 upgrade extended that foundation with multi-source data ingestion, a six-dimensional scoring model, and a self-contained single-file deployment architecture.</p>
+
+  <!-- Pipeline diagram -->
+  <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:36px;margin-bottom:40px;font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2)">
+    <div style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:20px">Spatial Intelligence Pipeline — Data Flow</div>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:0 16px;align-items:start">
+
+      <div style="color:var(--text3);font-size:11px;padding:12px 0;border-right:2px dashed var(--border2);padding-right:16px;text-align:right;white-space:nowrap">Layer 1<br/><span style="font-size:9px">INGESTION</span></div>
+      <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--accent);font-weight:600">REST API / Open-Data Pipeline</span><br/>
+        <span style="font-size:12px;color:var(--text2)">US: FERC interconnect queue exports, EIA-860 generator data, NERC reliability reports · China: NEA provincial generation statistics, State Grid capacity disclosures · India: CEA annual reports, POSOCO SAIDI/SAIFI tables, WRIS water resource data · Cross-cutting: WRI Aqueduct 4.0 GeoJSON, electricityMaps carbon intensity API, BloombergNEF PPA tracker extracts</span>
+      </div>
+
+      <div style="color:var(--text3);font-size:11px;padding:12px 0;border-right:2px dashed var(--border2);padding-right:16px;text-align:right;white-space:nowrap">Layer 2<br/><span style="font-size:9px">GEE SPATIAL</span></div>
+      <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--accent);font-weight:600">Google Earth Engine Spatial Processing</span><br/>
+        <span style="font-size:12px;color:var(--text2)">GEE JavaScript / Python API used to extract: solar irradiance rasters (NASA POWER / PVGIS integration), wind capacity factor grids (Global Wind Atlas), water stress polygons (WRI Aqueduct), and land-use suitability layers (ESA WorldCover 2021). Coordinate translation matrices applied via GeoPandas to align multi-CRS datasets to WGS84 decimal degrees for Leaflet rendering.</span>
+      </div>
+
+      <div style="color:var(--text3);font-size:11px;padding:12px 0;border-right:2px dashed var(--border2);padding-right:16px;text-align:right;white-space:nowrap">Layer 3<br/><span style="font-size:9px">SCORING</span></div>
+      <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--accent);font-weight:600">Six-Dimension Scoring Model</span><br/>
+        <span style="font-size:12px;color:var(--text2)">Each of the six dimensions (renewable access, grid stability, water risk, policy clarity, cost index, infrastructure readiness) is constructed from 2–4 normalised sub-indicators, then averaged. Normalisation uses min-max scaling across the 11-site dataset. Composite score = unweighted mean of six dimension scores. All scores are analytical estimates — not utility measurements.</span>
+      </div>
+
+      <div style="color:var(--text3);font-size:11px;padding:12px 0;border-right:2px dashed var(--border2);padding-right:16px;text-align:right;white-space:nowrap">Layer 4<br/><span style="font-size:9px">RENDERING</span></div>
+      <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--accent);font-weight:600">Folium Map Core → Leaflet.js · Chart.js</span><br/>
+        <span style="font-size:12px;color:var(--text2)">Original pipeline: Python Folium engine generating CircleMarker layers with radius ∝ √MW capacity, colour-classified by renewable tier (green → amber → red), compiled to Base64 data-stream and embedded in iframe. v2 upgrade: ported to vanilla Leaflet.js for direct DOM control, added Chart.js analytics layer (scatter, bar, bubble charts), and replaced iframe embed with native map div for full interactivity.</span>
+      </div>
+
+      <div style="color:var(--text3);font-size:11px;padding:12px 0;border-right:2px dashed var(--border2);padding-right:16px;text-align:right;white-space:nowrap">Layer 5<br/><span style="font-size:9px">DEPLOYMENT</span></div>
+      <div style="padding:12px 0">
+        <span style="color:var(--accent);font-weight:600">Self-Contained Single-File Architecture → GitHub Pages</span><br/>
+        <span style="font-size:12px;color:var(--text2)">Output: single index.html (~2,100 lines) with all CSS, JavaScript, and data embedded inline. No build toolchain, no npm, no server required. All external dependencies (Leaflet, Chart.js, Google Fonts) loaded from CDN. Deployable to GitHub Pages by replacing one file. Original Python pipeline preserved as generate_dashboard.py in repository root.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech stack cards -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px">
+      <div style="font-size:20px;margin-bottom:10px">🌍</div>
+      <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Google Earth Engine</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">Spatial raster extraction: solar irradiance, wind capacity factors, water stress polygons, land cover classification.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px">
+      <div style="font-size:20px;margin-bottom:10px">🐍</div>
+      <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Python / Folium</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">Seed pipeline: GeoPandas alignment, coordinate translation, Folium CircleMarker generation, Base64 compilation to standalone HTML.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px">
+      <div style="font-size:20px;margin-bottom:10px">🗺️</div>
+      <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">Leaflet.js + Chart.js</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">Interactive map (CartoDB Positron tile), proportional circle markers, rich popups, region filter controls, and four analytics chart panels.</div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px">
+      <div style="font-size:20px;margin-bottom:10px">🚀</div>
+      <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">GitHub Pages</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6">Zero-infrastructure deployment. Single HTML file pushed to repository root. Live at prakashkrish-datageek.github.io/Ecogrid-AI.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- REFERENCES & METHODOLOGY -->
+<section id="methodology" style="background:var(--bg)">
+  <div class="section-label">References & Methodology</div>
+  <h2 class="section-title">Data Sources, Limitations & Disclosure</h2>
+  <p class="section-body">This analysis synthesises public datasets, industry reports, and practitioner judgement. All modelled scores are directional indicators for comparative evaluation — not utility measurements or investment-grade assessments. Each source is listed with the specific data element it informs.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px">
+    <!-- Left: sources by category -->
+    <div>
+      <div style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border)">Primary Data Sources</div>
+
+      <div style="margin-bottom:24px">
+        <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">⚡ Grid & Interconnect</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">FERC Interconnection Queue</strong> (ferc.gov) — US interconnect backlog volumes and study timelines. Informs Grid Stability Score and PJM queue context.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">NERC Long-Term Reliability Assessment 2024</strong> — US regional reserve margins and SAIDI/SAIFI reliability metrics.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">POSOCO Annual Report 2023–24</strong> (India) — State-level distribution reliability indices. Informs India Grid Stability scores.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">China NEA Provincial Generation Statistics 2024</strong> — Provincial generation mix and renewable share. Informs China Renewable Access scores.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">CEA Annual Report 2023–24</strong> (India) — State-level renewable capacity and open access framework data.</span></li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:24px">
+        <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">💧 Water & Environment</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">WRI Aqueduct 4.0</strong> (wri.org/aqueduct) — Baseline Water Stress scores at watershed level. Directly feeds Water Risk Score (inverted and scaled).</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">Lawrence Berkeley National Lab — United States Data Center Energy Usage Report (LBNL-2001975)</strong> — Water consumption per MW benchmarks for cooling systems.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">ESA WorldCover 2021 (via GEE)</strong> — Land cover classification for siting constraint analysis.</span></li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:24px">
+        <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">🌿 Renewable Energy</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">IEA World Energy Statistics 2024 / Electricity Information 2024</strong> — National and provincial generation mix. Informs carbon intensity estimates and Renewable Access scores.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">electricityMaps (electricitymaps.com)</strong> — Real-time and historical grid carbon intensity at country/zone level. Carbon intensity values in map popups are annual averages derived from this source.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">Global Wind Atlas 3.0 (DTU / World Bank, via GEE)</strong> — Wind capacity factor rasters at 250m resolution. Informs renewable access scoring for wind-dominant sites (Inner Mongolia, DFW, Rajasthan).</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">NASA POWER / PVGIS (via GEE)</strong> — Solar irradiance (GHI) rasters at 1km resolution. Informs renewable access scoring for solar-dominant sites (Phoenix, Rajasthan, Inner Mongolia).</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right: industry reports + limitations -->
+    <div>
+      <div style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border)">Industry Reports & Practitioner Sources</div>
+
+      <div style="margin-bottom:24px">
+        <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">🏗️ Data Center & Infrastructure</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">Uptime Institute Global Data Center Survey 2024</strong> — PUE benchmarks by region and cooling architecture type. PUE target ranges in site profiles are calibrated against this data.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">BloombergNEF New Energy Outlook & PPA Tracker 2024</strong> — Power purchase agreement pricing by technology and geography. Feeds Cost Index and per-site PPA rate estimates.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">JLL Data Center Outlook 2024 / Cushman & Wakefield Global DC Report</strong> — Permitting timelines, operator density, land availability. Feeds Policy Clarity and Infrastructure Readiness scores.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">Data Center Dynamics (DCD) / Structure Research</strong> — Pipeline MW tracking, operator announced projects, commissioning timelines. Primary source for Proposed MW figures.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">The Green Grid — PUE Metrics &amp; Best Practices</strong> — PUE definition, benchmarking methodology, and cooling architecture classification used in site profiles.</span></li>
+        </ul>
+      </div>
+
+      <div style="margin-bottom:24px">
+        <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">⚖️ Policy & Regulation</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">FERC Order 2023</strong> — US interconnect queue reform framework. Context for PJM backlog characterisation.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">China CAC Data Security Law (2021) / PIPL</strong> — Data sovereignty constraints applied in China Policy Clarity scoring.</span></li>
+          <li style="font-size:13px;color:var(--text2);display:flex;gap:10px"><span style="color:var(--accent);flex-shrink:0">→</span><span><strong style="color:var(--text)">India CERC Open Access Regulations / DPDP Act 2023</strong> — Open access wheeling rules and data localisation obligations. Informs India Policy Clarity scores.</span></li>
+        </ul>
+      </div>
+
+      <!-- Limitations box -->
+      <div style="background:var(--amber-dim);border:1px solid rgba(227,116,0,0.2);border-radius:8px;padding:20px">
+        <div style="font-family:var(--display);font-size:14px;font-weight:700;color:var(--amber);margin-bottom:10px">⚠ Limitations & Disclosure</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:12px;color:var(--text2);display:flex;gap:8px"><span style="color:var(--amber);flex-shrink:0">·</span><span>All dimension scores are <strong>modelled estimates</strong>, not direct utility measurements. They reflect the author's analytical synthesis and should be treated as directional indicators only.</span></li>
+          <li style="font-size:12px;color:var(--text2);display:flex;gap:8px"><span style="color:var(--amber);flex-shrink:0">·</span><span>Proposed MW figures reflect announced pipelines, not commissioned or under-construction capacity. Actual build-out will differ materially.</span></li>
+          <li style="font-size:12px;color:var(--text2);display:flex;gap:8px"><span style="color:var(--amber);flex-shrink:0">·</span><span>Carbon intensity values are annual provincial averages. Hourly CFE scores are modelled approximations based on generation mix and weather patterns — not metered data.</span></li>
+          <li style="font-size:12px;color:var(--text2);display:flex;gap:8px"><span style="color:var(--amber);flex-shrink:0">·</span><span>This analysis does not constitute investment, legal, or engineering advice. Data compiled May 2026; grid and policy environments change rapidly.</span></li>
+          <li style="font-size:12px;color:var(--text2);display:flex;gap:8px"><span style="color:var(--amber);flex-shrink:0">·</span><span>China data is derived from state-published statistics; independent verification is limited.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
 <footer>
   <div>
-    <div class="footer-brand">EcoGrid AI v2.0</div>
+    <div class="footer-brand">EcoGrid AI v2.1</div>
     <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:6px">Hyper-Scale Data Center Grid & Sustainability Intelligence</div>
   </div>
   <div class="footer-meta">
     <div>Built by <a href="https://github.com/prakashkrish-DataGeek" target="_blank">prakashkrish-DataGeek</a></div>
-    <div>Data compiled May 2026 from FERC, CEA, GridWatch, IEA, and operator disclosures</div>
-    <div style="margin-top:6px;color:var(--text3)">Analysis reflects practitioner synthesis — not investment advice</div>
+    <div>All scores are modelled estimates · <a href="#methodology">See References & Methodology</a></div>
+    <div style="margin-top:4px">Data compiled May 2026 · Not investment advice</div>
   </div>
 </footer>
 
@@ -1734,7 +1929,7 @@ function initMap() {
             <div class="popup-stat-val" style="color:${color}">${score}/100</div>
           </div>
           <div>
-            <div class="popup-stat-label">Carbon Intensity</div>
+            <div class="popup-stat-label">Carbon Intensity (modelled)</div>
             <div class="popup-stat-val">${site.carbonIntensity} gCO₂/kWh</div>
           </div>
           <div>
